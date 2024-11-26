@@ -2,9 +2,9 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"github.com/halng/bookshop/db"
+	"github.com/halng/bookshop/logging"
 	"github.com/jinzhu/gorm"
-	"github.com/tanhaok/megastore/db"
-	"github.com/tanhaok/megastore/logging"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"os"

@@ -3,7 +3,7 @@ package kafka
 import (
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/tanhaok/megastore/logging"
+	"github.com/halng/bookshop/logging"
 	"go.uber.org/zap"
 )
 

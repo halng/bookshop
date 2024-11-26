@@ -1,3 +1,5 @@
 .idea/
 cover.out
 .env
+
+vendor/

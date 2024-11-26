@@ -3,13 +3,13 @@ package handlers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/tanhaok/megastore/constants"
-	"github.com/tanhaok/megastore/db"
-	"github.com/tanhaok/megastore/dto"
-	"github.com/tanhaok/megastore/kafka"
-	"github.com/tanhaok/megastore/logging"
-	"github.com/tanhaok/megastore/models"
-	"github.com/tanhaok/megastore/utils"
+	"github.com/halng/bookshop/constants"
+	"github.com/halng/bookshop/db"
+	"github.com/halng/bookshop/dto"
+	"github.com/halng/bookshop/kafka"
+	"github.com/halng/bookshop/logging"
+	"github.com/halng/bookshop/models"
+	"github.com/halng/bookshop/utils"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
@@ -46,7 +46,11 @@ func CreateStaff(c *gin.Context) {
 
 	// only for newly created user. default password is "123456"
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(constants.DefaultPassword), bcrypt.DefaultCost)
-
+	if err != nil {
+		logging.LOGGER.Error("CreateStaff", zap.Error(err))
+		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
+		return
+	}
 	account := models.Account{}
 	account.Email = userInput.Email
 	account.Username = userInput.Username

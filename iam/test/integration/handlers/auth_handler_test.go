@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	handlers2 "github.com/halng/bookshop/handlers"
+	"github.com/halng/bookshop/test/integration"
 	"github.com/stretchr/testify/assert"
-	handlers2 "github.com/tanhaok/megastore/handlers"
-	"github.com/tanhaok/megastore/test/integration"
 	"net/http"
 	"os"
 	"testing"

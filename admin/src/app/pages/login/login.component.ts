@@ -54,6 +54,10 @@ export class LoginComponent {
   ) {}
 
   onSubmitForm(event: MouseEvent) {
+    if (!this.username || !this.password) {
+      this.toast.warning('Username or password is empty');
+      return
+    }
     if (this.username.length < 6 && this.password.length < 8) {
       this.toast.warning('Username or password is incorrect format');
       this.username = '';
