@@ -24,7 +24,7 @@ jobs:
       - name: set up angular
         uses: actions/setup-node@v2
         with:
-          node-version: "20.9.0"
+          node-version: "20.17.0"
       - name: Install dependencies
         run: npm install
         working-directory: ./admin
