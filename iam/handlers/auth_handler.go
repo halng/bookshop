@@ -128,13 +128,13 @@ func Validate(c *gin.Context) {
 	hashMD5 := utils.ComputeMD5([]string{userId})
 	accessToken, err := db.GetDataFromKey(fmt.Sprintf("%s_%s", hashMD5, apiToken))
 	if err != nil || accessToken == nil || accessToken == "" {
-		ResponseErrorHandler(c, http.StatusUnauthorized, constants.TokenNotFount, accessToken)
+		ResponseErrorHandler(c, http.StatusBadRequest, constants.TokenNotFount, accessToken)
 		return
 	}
 
 	isValidToken, userId, username, role := utils.ExtractDataFromToken(accessToken.(string))
 	if !isValidToken {
-		ResponseErrorHandler(c, http.StatusUnauthorized, constants.TokenNotFount, apiToken)
+		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, apiToken)
 		return
 	}
 	ResponseSuccessHandler(c, http.StatusOK, nil)
