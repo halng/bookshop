@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/tanhaok/megastore/logging"
+	"github.com/halng/anyshop/logging"
 	"go.uber.org/zap"
 )
 
@@ -30,9 +30,10 @@ func ResponseErrorHandler(c *gin.Context, code int, err interface{}, traceData a
 		zap.Any("header", c.Request.Header),
 		zap.Any("error", err),
 	)
-	c.JSON(code, gin.H{
+	c.AbortWithStatusJSON(code, gin.H{
 		"code":   code,
 		"status": "ERROR",
 		"error":  err,
 	})
+	c.Abort()
 }

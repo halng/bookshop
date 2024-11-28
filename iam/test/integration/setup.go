@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/tanhaok/megastore/db"
-	kafka2 "github.com/tanhaok/megastore/kafka"
-	"github.com/tanhaok/megastore/logging"
-	"github.com/tanhaok/megastore/models"
+	"github.com/halng/anyshop/db"
+	kafka2 "github.com/halng/anyshop/kafka"
+	"github.com/halng/anyshop/logging"
+	"github.com/halng/anyshop/models"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
 	"io"
@@ -128,12 +128,17 @@ func SetupContainers() {
 			"KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR": "1",
 			"KAFKA_TRANSACTION_STATE_LOG_MIN_ISR":            "1",
 			"KAFKA_LISTENER_SECURITY_PROTOCOL_MAP":           "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT",
-			"KAFKA_ADVERTISED_LISTENERS":                     "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092",
-			"KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE":         "false",
-			"KAFKA_AUTO_CREATE_TOPICS_ENABLE":                "true",
-			"KAFKA_AUTHORIZER_CLASS_NAME":                    "kafka.security.authorizer.AclAuthorizer",
-			"KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND":           "true",
-			"KAFKA_BROKER_ID":                                "0",
+			//"KAFKA_ADVERTISED_LISTENERS":                     "PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092",
+
+			"KAFKA_ADVERTISED_LISTENERS":       "PLAINTEXT://kafka:29092,PLAINTEXT_HOST://host.docker.internal:9092",
+			"KAFKA_LISTENERS":                  "PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092",
+			"KAFKA_INTER_BROKER_LISTENER_NAME": "PLAINTEXT",
+
+			"KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE": "false",
+			"KAFKA_AUTO_CREATE_TOPICS_ENABLE":        "true",
+			"KAFKA_AUTHORIZER_CLASS_NAME":            "kafka.security.authorizer.AclAuthorizer",
+			"KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND":   "true",
+			"KAFKA_BROKER_ID":                        "0",
 		},
 		WaitingFor: wait.ForAll(
 			wait.ForListeningPort("9092/tcp"),
@@ -171,8 +176,8 @@ func SetupTestServer() {
 	SetupContainers()
 	// set up some env variable
 	ctx := context.Background()
-	//kafkaBootStrapServerIP, _ := KafkaContainer.ContainerIP(ctx)
-	kafkaBootStrapServer := fmt.Sprintf("%s:9092", "localhost")
+	kafkaBootStrapServerIP, _ := KafkaContainer.ContainerIP(ctx)
+	kafkaBootStrapServer := fmt.Sprintf("%s:9092", kafkaBootStrapServerIP)
 	postgresIP, _ := PostgresContainer.ContainerIP(ctx)
 	redisIP, _ := RedisContainer.ContainerIP(ctx)
 
@@ -186,6 +191,11 @@ func SetupTestServer() {
 	os.Setenv("REDIS_HOST", redisIP)
 	os.Setenv("REDIS_DB", "0")
 	os.Setenv("REDIS_PASSWORD", "")
+	os.Setenv("MASTER_USERNAME", "changeme")
+	os.Setenv("MASTER_PASSWORD", "changeme")
+	os.Setenv("MASTER_EMAIL", "changeme@gmail.com")
+	os.Setenv("MASTER_FIRST_NAME", "changeme")
+	os.Setenv("MASTER_LAST_NAME", "changeme")
 
 	err := kafka2.InitializeKafkaProducer(kafkaBootStrapServer)
 	if err != nil {
