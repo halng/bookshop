@@ -3,10 +3,10 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/halng/bookshop/constants"
-	"github.com/halng/bookshop/db"
-	"github.com/halng/bookshop/handlers"
-	"github.com/halng/bookshop/utils"
+	"github.com/halng/anyshop/constants"
+	"github.com/halng/anyshop/db"
+	"github.com/halng/anyshop/handlers"
+	"github.com/halng/anyshop/utils"
 	"net/http"
 )
 

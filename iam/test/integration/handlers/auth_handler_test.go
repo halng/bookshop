@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/halng/bookshop/constants"
-	handlers2 "github.com/halng/bookshop/handlers"
-	"github.com/halng/bookshop/middleware"
-	"github.com/halng/bookshop/test/integration"
+	"github.com/halng/anyshop/constants"
+	handlers2 "github.com/halng/anyshop/handlers"
+	"github.com/halng/anyshop/middleware"
+	"github.com/halng/anyshop/test/integration"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,6 +18,13 @@ func TestLoginHandler(t *testing.T) {
 	router := integration.SetUpRouter()
 
 	router.POST(urlPathLogin, handlers2.Login)
+
+	/**
+	Test case 1: Login with master credentials.
+	Test case 2: Check for invalid JSON data binding.
+	Test case 3: User not found scenario.
+	Test case 4: Existing account with incorrect password.
+	*/
 
 	t.Run("Login: when master credential is used", func(t *testing.T) {
 		// Act
@@ -59,10 +66,10 @@ func TestLoginHandler(t *testing.T) {
 	})
 }
 
-
 // TestCreateStaffHandler combine both test for middleware and CreateStaff Func
 func TestCreateStaffHandler(t *testing.T) {
-	urlPathRegister := "/api/v1/create-staff"
+	urlPathCreateStaff := "/api/v1/create-staff"
+	urlPathLogin := "/api/v1/login"
 
 	headers := map[string]string{
 		constants.ApiTokenRequestHeader:  "test-secret",
@@ -70,11 +77,14 @@ func TestCreateStaffHandler(t *testing.T) {
 	}
 
 	router := integration.SetUpRouter()
-	router.POST(urlPathRegister, middleware.ValidateRequest, handlers2.CreateStaff)
+	router.POST(urlPathCreateStaff, middleware.ValidateRequest, handlers2.CreateStaff)
+	router.POST(urlPathLogin, handlers2.Login)
 
-	t.Run("Create Staff: when request not fulfill - Missing Header", func(t *testing.T) {
+	var masterAdminAuthObject map[string]interface{}
+
+	t.Run("Create Staff & Validate Request: when request not fulfill - Missing Header", func(t *testing.T) {
 		// Act
-		code, res := integration.ServeRequest(router, "POST", urlPathRegister, "")
+		code, res := integration.ServeRequest(router, "POST", urlPathCreateStaff, "")
 
 		// Assert
 		if code != http.StatusUnauthorized {
@@ -85,67 +95,68 @@ func TestCreateStaffHandler(t *testing.T) {
 		assert.Equal(t, 401, code)
 	})
 
-	// t.Run("Create Staff: when requester have permission", func(t *testing.T) {
-	// 	code, res := integration.ServeRequest(router, "POST", urlPathLogin, jsonLoginData)
-
-	// 	assert.Equal(t, 200, code)
-	// 	assert.Contains(t, res, "token")
-
-	// 	var encodedRes dto.LoginResponse
-	// 	err := json.Unmarshal([]byte(res), &encodedRes)
-	// 	assert.NoError(t, err)
-
-	// 	headers[constants.ApiTokenRequestHeader] = encodedRes.ApiToken
-	// 	headers[constants.ApiUserIdRequestHeader] = encodedRes.ID
-
-	// 	code, res, _ = integration.ServeRequestWithHeader(
-	// 		router,
-	// 		"POST",
-	// 		urlPathRegister,
-	// 		`{"email":"test@gmail.com",
-	// 				"username": "test",
-	// 				"password": "test",
-	// 				"lastname": "test",
-	// 				"firstname": "test"}`,
-	// 		headers)
-
-	// 	assert.Equal(t, 201, code)
-
-	// })
-
-	t.Run("Create Staff: when email is invalid and missing field", func(t *testing.T) {
-		// Act
-		invalidUserInput := `{"email":"this-is-not-valid-email","username": "changeme", "lastname": "changeme"}`
-
-		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathRegister, invalidUserInput, headers)
-
-		if code != http.StatusBadRequest {
-			t.Errorf("Expected status code %d but got %d", http.StatusBadRequest, code)
-		}
-
-		expectedResponse := `{"code":400,"error":{"0":"The email field must be a valid email address","1":"The firstname field is required"},"status":"ERROR"}`
-		assert.Equal(t, expectedResponse, res)
-		assert.Equal(t, 400, code)
-	})
-	t.Run("Create Staff: when data is unable to bind to json", func(t *testing.T) {
-
-		// Act
-		invalidUserInput := `{"email":"this-is-not-valid-email","userName": "changeme", "lastname": "changeme"}`
-		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathRegister, invalidUserInput, headers)
+	t.Run("Create Staff & Validate Request: when request not valid", func(t *testing.T) {
+		// act
+		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, "", headers)
 
 		// Assert
-		if code != http.StatusBadRequest {
-			t.Errorf("Expected status code %d but got %d", http.StatusBadRequest, code)
-		}
-
-		expectedResponse := `{"code":400,"error":"Please check your input. Something went wrong","status":"ERROR"}`
-		assert.Equal(t, expectedResponse, res)
-		assert.Equal(t, 400, code)
+		assert.Equal(t, code, http.StatusUnauthorized)
+		assert.Equal(t, res, `{"code":401,"error":"Your login session has expired. Please login again","status":"ERROR"}`)
 	})
+
+	t.Run("Create Staff: Master Admin Login", func(t *testing.T) {
+		loginJsonRequest := `{"password": "changeme", "username": "changeme"}`
+		code, res := integration.ServeRequest(router, "POST", urlPathLogin, loginJsonRequest)
+
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(res), &data)
+
+		masterAdminAuthObject = data["data"].(map[string]interface{})
+
+		headers[constants.ApiTokenRequestHeader] = masterAdminAuthObject["api-token"].(string)
+		headers[constants.ApiUserIdRequestHeader] = masterAdminAuthObject["id"].(string)
+
+		assert.Equal(t, 200, code)
+	})
+
+	t.Run("Create Staff: when requester have permission but input not valid", func(t *testing.T) {
+
+		// can not bind json data
+		code, res, _ := integration.ServeRequestWithHeader(
+			router,
+			"POST",
+			urlPathCreateStaff,
+			`{"email":"test@gmail.com",
+					"username": "test,
+					"password" "test",
+					"lastname": "test",
+					"firstname": "test"}`,
+			headers)
+
+		assert.Equal(t, http.StatusBadRequest, code)
+		assert.Equal(t, res, `{"code":400,"error":"Please check your input. Something went wrong","status":"ERROR"}`)
+
+		// invalid input
+		code, res, _ = integration.ServeRequestWithHeader(
+			router,
+			"POST",
+			urlPathCreateStaff,
+			`{"email":"not-valid-email",
+					"username": "test",
+					"password": "test",
+					"lastname": "test",
+					"firstname": "test"}`,
+			headers)
+
+		assert.Equal(t, http.StatusBadRequest, code)
+		assert.Contains(t, res, "must be a valid email address")
+
+	})
+
 	t.Run("Create Staff: when user is successfully registered", func(t *testing.T) {
 		// Act
-		validUserInput := `{"email":"changeme@gmail.com", "username": "changeme", "password": "changeme", "lastname": "changeme", "firstname": "changeme"}`
-		code, res := integration.ServeRequest(router, "POST", urlPathRegister, validUserInput)
+		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff"}`
+		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
 
 		// Assert
 		if code != http.StatusCreated {
@@ -154,17 +165,41 @@ func TestCreateStaffHandler(t *testing.T) {
 		expectedResponse := `{"code":201,"data":null,"status":"SUCCESS"}`
 		assert.Equal(t, expectedResponse, res)
 	})
+
 	t.Run("Create Staff: when user is exists", func(t *testing.T) {
 		// Act
-		validUserInput := `{"email":"changeme@gmail.com", "username": "changeme", "password": "changeme", "lastname": "changeme", "firstname": "changeme"}`
-		code, res := integration.ServeRequest(router, "POST", urlPathRegister, validUserInput)
+		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff"}`
+		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
 
 		// Assert
 		if code != http.StatusBadRequest {
 			t.Errorf("Expected status code %d but got %d", http.StatusBadRequest, code)
 		}
-		expectedResponse := `{"code":400,"error":"Account with username: changeme@gmail.com or email: changeme already exists","status":"ERROR"}`
+		expectedResponse := `{"code":400,"error":"Account with username: createdstaff@gmail.com or email: createdstaff already exists","status":"ERROR"}`
 		assert.Equal(t, expectedResponse, res)
+	})
+
+	t.Run("Create Staff: when requester don't have permission", func(t *testing.T) {
+		// newly created user login
+		loginJson := `{"password": "12345678", "username": "createdstaff"}`
+		code, res := integration.ServeRequest(router, "POST", urlPathLogin, loginJson)
+
+		assert.Equal(t, http.StatusOK, code)
+		var data map[string]interface{}
+		_ = json.Unmarshal([]byte(res), &data)
+
+		objectData := data["data"].(map[string]interface{})
+
+		headers[constants.ApiTokenRequestHeader] = objectData["api-token"].(string)
+		headers[constants.ApiUserIdRequestHeader] = objectData["id"].(string)
+
+		// create new user with staff role
+		// Act
+		validUserInput := `{"email":"no-nope@gmail.com", "username": "nope", "password": "nope", "lastname": "nope", "firstname": "nope"}`
+		code, res, _ = integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
+
+		assert.Equal(t, http.StatusForbidden, code)
+		assert.Equal(t, res, `{"code":403,"error":"User does not have permission to access this resource","status":"ERROR"}`)
 	})
 }
 
@@ -196,41 +231,46 @@ func TestValidate(t *testing.T) {
 	})
 	t.Run("Validate: when user token was expired", func(t *testing.T) {
 		headers := map[string]string{
-			constants.ApiTokenRequestHeader: "XXX",
+			constants.ApiTokenRequestHeader:  "XXX",
 			constants.ApiUserIdRequestHeader: "USER_ID",
 		}
 
 		// act
 		code, res, _ := integration.ServeRequestWithHeader(router, "GET", urlPathValidate, "", headers)
-		
+
 		// Assert
 		assert.Equal(t, code, http.StatusBadRequest)
-		assert.Equal(t,res, `{"code":400,"error":"Your login session has expired. Please login again","status":"ERROR"}`)
+		assert.Equal(t, res, `{"code":400,"error":"Your login session has expired. Please login again","status":"ERROR"}`)
 	})
 
-	t.Run("Validate: when system cannot extract data from token", func(t *testing.T) {
-		// Login 
+	t.Run("Validate: success validate user", func(t *testing.T) {
+		// Login
 		loginJsonRequest := `{"password": "changeme", "username": "changeme"}`
 		code, res := integration.ServeRequest(router, "POST", urlPathLogin, loginJsonRequest)
 
 		var data map[string]interface{}
 		err := json.Unmarshal([]byte(res), &data)
-		
-		var resData map[string]interface{}
-		err = json.Unmarshal([]byte(data["data"].(string)), &resData)
+
+		authData := data["data"].(map[string]interface{})
+		//err = json.Unmarshal([]byte(authData), &resData)
 		assert.NoError(t, err)
 
 		headers := map[string]string{
-			constants.ApiTokenRequestHeader: resData["api-token"].(string),
-			constants.ApiUserIdRequestHeader: resData["id"].(string),
+			constants.ApiTokenRequestHeader:  authData["api-token"].(string),
+			constants.ApiUserIdRequestHeader: authData["id"].(string),
 		}
 
 		// act
-		code, res, _ = integration.ServeRequestWithHeader(router, "GET", urlPathValidate, "", headers)
-		
+		code, res, resHeaders := integration.ServeRequestWithHeader(router, "GET", urlPathValidate, "", headers)
+
 		// Assert
-		assert.Equal(t, code, http.StatusInternalServerError)
-		assert.Equal(t,res, `{"code":500,"error":"There was an error processing your request. Please try again later","status":"ERROR"}`)
+		assert.Equal(t, code, http.StatusOK)
+		assert.Equal(t, res, `{"code":200,"data":null,"status":"SUCCESS"}`)
+
+		assert.Equal(t, "super_admin", resHeaders.Get(constants.ApiUserRoles))
+		assert.Equal(t, "changeme", resHeaders.Get(constants.ApiUserRequestHeader))
+		assert.Equal(t, authData["id"].(string), resHeaders.Get(constants.ApiUserIdRequestHeader))
+
 	})
 }
 

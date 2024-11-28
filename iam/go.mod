@@ -1,4 +1,4 @@
-module github.com/halng/bookshop
+module github.com/halng/anyshop
 
 go 1.23.3
 

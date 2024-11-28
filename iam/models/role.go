@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"github.com/halng/bookshop/db"
+	"github.com/halng/anyshop/db"
 )
 
 const (

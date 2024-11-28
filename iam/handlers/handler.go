@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/halng/bookshop/logging"
+	"github.com/halng/anyshop/logging"
 	"go.uber.org/zap"
 )
 
