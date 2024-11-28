@@ -35,9 +35,9 @@ export class AppComponent implements OnInit {
   readonly #iconSetService = inject(IconSetService);
 
   constructor(
-    private titleService: Title,
-    private router: Router,
-    private userService: UserService
+    private readonly titleService: Title,
+    private readonly router: Router,
+    private readonly userService: UserService
   ) {
     this.setTitle(this.tabTitle);
     this.#titleService.setTitle(this.title);

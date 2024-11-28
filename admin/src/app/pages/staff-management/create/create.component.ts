@@ -39,7 +39,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './create.component.html',
 })
 export class CreateComponent {
-  constructor(private userService: UserService, private toast: ToastrService) {}
+  constructor(private readonly userService: UserService, private readonly toast: ToastrService) {}
 
   user: UserCreate = {
     username: '',

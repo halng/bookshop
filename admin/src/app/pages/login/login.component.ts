@@ -48,15 +48,15 @@ export class LoginComponent {
   password = '';
 
   constructor(
-    private userService: UserService,
-    private router: Router,
-    private toast: ToastrService
+    private readonly userService: UserService,
+    private readonly router: Router,
+    private readonly toast: ToastrService
   ) {}
 
   onSubmitForm(event: MouseEvent) {
     if (!this.username || !this.password) {
       this.toast.warning('Username or password is empty');
-      return
+      return;
     }
     if (this.username.length < 6 && this.password.length < 8) {
       this.toast.warning('Username or password is incorrect format');
@@ -81,7 +81,7 @@ export class LoginComponent {
           }
         },
         (err) => {
-          console.log(err)
+          console.log(err);
           const error = err.error.error;
           this.toast.error(error);
         }
