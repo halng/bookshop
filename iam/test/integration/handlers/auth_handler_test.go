@@ -248,6 +248,7 @@ func TestValidate(t *testing.T) {
 		loginJsonRequest := `{"password": "changeme", "username": "changeme"}`
 		code, res := integration.ServeRequest(router, "POST", urlPathLogin, loginJsonRequest)
 
+		assert.Equal(t, 200, code)
 		var data map[string]interface{}
 		err := json.Unmarshal([]byte(res), &data)
 
