@@ -2,10 +2,15 @@
 const eslint = require("@eslint/js");
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
+const tsParser = require("@typescript-eslint/parser");
 
 module.exports = tseslint.config(
   {
     files: ["**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions:{project: "./tsconfig.json"},
+    },
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommended,

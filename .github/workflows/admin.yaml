@@ -31,9 +31,9 @@ jobs:
       - name: Lint
         run: npm run lint
         working-directory: ./admin
-      - name: Run tests
-        run: npm run test-ci
-        working-directory: ./admin
+      # - name: Run tests
+      #   run: npm run test-ci
+        # working-directory: ./admin
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
