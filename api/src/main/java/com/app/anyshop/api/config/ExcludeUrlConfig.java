@@ -18,8 +18,8 @@ public class ExcludeUrlConfig {
     }
 
     public static boolean isSecure(String requestPath, HttpMethod method) {
-        for (Map.Entry ex : excludedUrl.entrySet()) {
-            if (requestPath.contains(ex.getKey().toString()) && method.equals(ex.getValue())) {
+        for (var ex : excludedUrl.entrySet()) {
+            if (requestPath.contains(ex.getKey()) && method.equals(ex.getValue())) {
                 return false;
             }
         }

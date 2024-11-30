@@ -6,6 +6,7 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.G
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
 
 import com.app.anyshop.api.viewmodel.AuthValidateVm;
+import com.app.anyshop.api.viewmodel.ResVm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URI;
@@ -41,7 +42,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
 
     @Autowired private ObjectMapper objectMapper;
 
-    @Value("${gateway.auth}")
+    @Value("${host.iam}")
     private String AUTH_URI;
 
     public AuthFilterConfig(WebClient.Builder webClientBuilder) {
@@ -51,7 +52,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
 
     @Override
     public GatewayFilter apply(Config config) {
-        String validateUrl = AUTH_URI + "/api/v1/auth/validate";
+        String validateUrl = AUTH_URI + "/api/v1/iam/validate";
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();
@@ -62,6 +63,9 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
             String originalUri = (uris.isEmpty()) ? "Unknown" : uris.iterator().next().toString();
             Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
             URI routeUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
+            if (route == null || routeUri == null) {
+                return chain.filter(exchange);
+            }
             LOG.info(
                     "Incoming request %s is routed to id: %s, uri: %s"
                             .formatted(originalUri, route.getId(), routeUri));

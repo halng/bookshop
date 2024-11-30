@@ -1,28 +1,41 @@
 server:
-    port: 9090
+  port: 9090
+  address: 0.0.0.0
 
 host:
-    auth: http://localhost:9091
-    product: http://localhost:9094
-    media: http://localhost:9095
-    inventory: http://localhost:9096
+  iam: http://localhost:9091
+  product: http://localhost:9094
+  media: http://localhost:9095
+  inventory: http://localhost:9096
 
 spring:
-    application:
-        name: api
-    profiles:
-        active: "dev"
-    main:
-        allow-bean-definition-overriding: true
+  data:
+    redis:
+      database: 0
+      host: localhost
+      port: 6379
+      timeout: 60000
+  application:
+    name: api
+  profiles:
+    active: "dev"
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    inetutils:
+#      default-hostname: localhost
+#      default-ip-address: 127.0.0.1
+      ignored-interfaces: .*
 
 logging:
-    level:
-        reactor:
-            netty: INFO
-        org:
-            springframework:
-                cloud:
-                    gateway: INFO
+  level:
+    reactor:
+      netty: INFO
+    org:
+      springframework:
+        cloud:
+          gateway: DEBUG
+        web: DEBUG
 
 #  cloud:
 #    gateway:
