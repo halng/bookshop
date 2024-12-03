@@ -12,7 +12,7 @@ install_sonar_cloud() {
     curl -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip
     unzip *.zip
     export PATH=$PATH:"${GITHUB_WORKSPACE}/sonar-scanner-6.2.1.4610-linux-x64/jre/bin"
-    echo "Done: Dowload and Unzip Sonar Cloud"
+    echo "Done: Download and Unzip Sonar Cloud"
 }
 
 # Detect language based on folder contents
@@ -58,6 +58,7 @@ run_ci() {
       mvn clean install
       ;;
     js | ts)
+      npm install
       npm run lint
       ;;
     go)
@@ -93,14 +94,16 @@ if [[ -z "$CHANGED_FOLDERS" ]]; then
 fi
 
 echo "Detected changed folders: $CHANGED_FOLDERS"
+
 install_sonar_cloud
+
 for folder in $CHANGED_FOLDERS; do
   if [[ ! -d "$folder" ]]; then
     echo "Folder $folder does not exist, skipping."
     continue
   fi
 
-  if [[ "$folder" ==  ".github"]]; then
+  if [[ "$folder" ==  ".github" ]]; then
     continue
   fi
 
