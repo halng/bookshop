@@ -16,7 +16,7 @@ public class APIConfig {
 
   private static final String IAM_PATH = "/api/v1/iam/**";
   private static final String IAM_PATH_REGEX = "/api/v1/iam(?<segment>/?.*)";
-  private static final String IAM_PATH_REPLACEMENT = "/api/v1/iam${segment}";
+  private static final String IAM_PATH_REPLACEMENT = "/api/v1${segment}";
 
   // others host
 

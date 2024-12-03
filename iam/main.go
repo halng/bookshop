@@ -45,7 +45,7 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	groupV1 := router.Group("/api/v1/iam")
+	groupV1 := router.Group("/api/v1")
 
 	// routes
 	groupV1.POST("/login", handlers.Login)
