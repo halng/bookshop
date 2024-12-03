@@ -42,7 +42,7 @@ jobs:
           # DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          chmod +x ci.sh
+          chmod +x ./ci.sh
           ./ci.sh
 
       - name: Comment on PR
