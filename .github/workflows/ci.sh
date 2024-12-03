@@ -4,6 +4,7 @@ set -e
 
 # Detect changed folders
 detect_changed_folders() {
+  git fetch origin main
   echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
 }
 
@@ -91,7 +92,7 @@ if [[ -z "$CHANGED_FOLDERS" ]]; then
 fi
 
 echo "Detected changed folders: $CHANGED_FOLDERS"
-
+install_sonar_cloud
 for folder in $CHANGED_FOLDERS; do
   if [[ ! -d "$folder" ]]; then
     echo "Folder $folder does not exist, skipping."
