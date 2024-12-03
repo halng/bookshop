@@ -42,8 +42,9 @@ jobs:
           # DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: |
-          chmod +x ./ci.sh
-          ./ci.sh
+          pwd
+          chmod +x .github/workflows/ci.sh
+          .github/workflows/ci.sh
 
       - name: Comment on PR
         if: github.event_name == 'pull_request'
