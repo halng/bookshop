@@ -38,6 +38,7 @@ jobs:
 
       - name: Run CI script
         env:
+          PSON_TOKEN: ${{ secrets.PSON_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN_IAM: ${{ secrets.SONAR_TOKEN_IAM }}
           SONAR_TOKEN_ADMIN_UI: ${{ secrets.SONAR_TOKEN_ADMIN_UI }}
