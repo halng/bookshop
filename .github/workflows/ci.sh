@@ -29,26 +29,10 @@ detect_language() {
   fi
 }
 
-get_sonar_token(){
-    case $1 in 
-    iam)
-        echo $SONAR_TOKEN_IAM
-        ;;
-    admin)
-        echo $SONAR_TOKEN_ADMIN_UI
-        ;;
-    *)
-      echo "No CI steps for $1, skipping."
-      ;;
-  esac
-
-}
-
 # Main CI process
 run_ci() {
   local folder=$1
   local language=$2
-  local sonar_token=$3
 
   cd "$folder"
   
@@ -71,7 +55,7 @@ run_ci() {
       ;;
   esac
   sonar-scanner 
-    \ -Dsonar.token=$sonar_token 
+    \ -Dsonar.token=$PSON_TOKEN
     \ -Dsonar.sources=. 
     \ -Dsonar.host.url=https://sonarcloud.io
 
@@ -115,7 +99,5 @@ for folder in $CHANGED_FOLDERS; do
     continue
   fi
 
-  token=$(get_sonar_token)
-
-  run_ci "$folder" "$language" "$token"
+  run_ci "$folder" "$language"
 done
