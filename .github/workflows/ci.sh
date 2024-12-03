@@ -11,7 +11,8 @@ detect_changed_folders() {
 install_sonar_cloud() {
     curl -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip
     unzip *.zip
-    export PATH=$PATH:"sonar-scanner-6.2.1.4610-linux-x64/jre/bin/"
+    export PATH=$PATH:"${GITHUB_WORKSPACE}/sonar-scanner-6.2.1.4610-linux-x64/jre/bin"
+    echo "Done: Dowload and Unzip Sonar Cloud"
 }
 
 # Detect language based on folder contents
