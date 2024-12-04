@@ -54,10 +54,9 @@ run_ci() {
       echo "No CI steps for $language in $folder, skipping."
       ;;
   esac
-  sonar-scanner 
-    \ -Dsonar.token=$PSON_TOKEN
-    \ -Dsonar.sources=. 
-    \ -Dsonar.host.url=https://sonarcloud.io
+
+  local project_key="anyshop_$folder"
+  sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key
 
   # Build and push Docker image
 #   if [[ -f "Dockerfile" ]]; then
