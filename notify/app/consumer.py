@@ -26,6 +26,7 @@ def consume(server: str, topic_pattern: str, group_id: str):
                 logger.error("Consumer error: %s" % msg.error())
             else:
                 logger.info("Message received: %s" % msg.value())
+                process_message(msg)
 
     except Exception as e:
         logger.error("Error in consume loop with message {message}".format(message=e))
@@ -37,6 +38,20 @@ def load_email_template(template: str) -> str:
         return f.read()
 
 def process_message(msg):
+    """
+    Function process message and send email.
+
+    :param msg: a json data. example:
+    {
+          "action": "ACTIVATE_NEW_STAFF",
+          "data": {
+            "username": "hello",
+            "email": "help@gmail.com",
+            "activate_link": "xxx.com",
+            "expired_time": "111"
+          }
+    }
+    """
     try:
         json_msg = json.loads(msg.value().decode('utf-8'))
         action = json_msg['action']
@@ -51,9 +66,10 @@ def process_message(msg):
         email_body = load_email_template(email_template)
 
         for key, value in data.items():
-            email_body.replace('{'+ key + '}', value)
+            email_body = email_body.replace('{'+ key + '}', value)
 
         logger.info("Process Message: Done - Starting send email with action {} for user {}", action, user_email)
+        logger.debug("Email body: {}", email_body)
         send_email(subject=email_subject, body=email_body, recipients=user_email)
 
     except Exception as e:
