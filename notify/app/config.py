@@ -12,3 +12,11 @@ EMAIL_CONFIG = {
     "sender_email": os.getenv("SENDER_EMAIL", "example@gmail.com"),
     "password": os.getenv("EMAIL_PASSWORD", "changeme")
 }
+
+EMAIL_TEMPLATE = {
+    "ACTIVATE_NEW_STAFF": "activate_new_staff.html",
+}
+
+EMAIL_SUBJECT = {
+    "ACTIVATE_NEW_STAFF": "Activate Your Account"
+}

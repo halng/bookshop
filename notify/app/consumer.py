@@ -2,6 +2,10 @@ from loguru import logger
 import json
 from confluent_kafka import Consumer
 
+from app.config import EMAIL_TEMPLATE, EMAIL_SUBJECT
+from app.email_sender import send_email
+
+
 def consume(server: str, topic_pattern: str, group_id: str):
     consumer_config = {
         'bootstrap.servers': server,
@@ -28,19 +32,29 @@ def consume(server: str, topic_pattern: str, group_id: str):
     finally:
         consumer.close()
 
+def load_email_template(template: str) -> str:
+    with open(f'./email_template/{template}', 'r') as f:
+        return f.read()
+
 def process_message(msg):
-    switcher_email_template = {
-        "ACTIVATE_NEW_STAFF": "activate_new_staff.html",
-    }
-
-
-
     try:
         json_msg = json.loads(msg.value().decode('utf-8'))
         action = json_msg['action']
-        email_template = switcher_email_template[action]
-        data = json_msg['data']
 
+        email_template = EMAIL_TEMPLATE[action]
+        email_subject = EMAIL_SUBJECT[action]
+
+        data = json_msg['data']
+        user_email = data['email']
+        del data['email']
+
+        email_body = load_email_template(email_template)
+
+        for key, value in data.items():
+            email_body.replace('{'+ key + '}', value)
+
+        logger.info("Process Message: Done - Starting send email with action {} for user {}", action, user_email)
+        send_email(subject=email_subject, body=email_body, recipients=user_email)
 
     except Exception as e:
         logger.error("Error when parsing message {message}".format(message=e))
