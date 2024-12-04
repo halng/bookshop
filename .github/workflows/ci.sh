@@ -15,8 +15,8 @@ install_sonar_cloud() {
     echo "Done: Download and Unzip Sonar Cloud"
 }
 
-install_golang_cli_lint(){
-    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.61.0
+install_golang_cli_lint() {
+  go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
 }
 
 # Detect language based on folder contents
@@ -37,6 +37,8 @@ detect_language() {
 run_ci() {
     local folder=$1
     local language=$2
+
+    echo "========================== $folder - $language  ==========================="
     
     cd "$folder"
     
@@ -60,7 +62,7 @@ run_ci() {
     esac
     
     local project_key="anyshop_$folder"
-    sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key
+    sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
     
     # Build and push Docker image
     #   if [[ -f "Dockerfile" ]]; then
@@ -82,9 +84,11 @@ fi
 
 echo "Detected changed folders: $CHANGED_FOLDERS"
 
+echo "Starting install dependencies..."
 install_sonar_cloud
 install_golang_cli_lint
 
+echo "Starting verify components..."
 for folder in $CHANGED_FOLDERS; do
     if [[ ! -d "$folder" ]]; then
         echo "Folder $folder does not exist, skipping."
