@@ -68,7 +68,7 @@ def process_message(msg):
         email_body = load_email_template(email_template)
 
         for key, value in data.items():
-            email_body = email_body.replace("{" + key + '}', value)
+            email_body = email_body.replace("{" + key + "}", value)
 
         logger.info(
             "Process Message: Done - Starting send email with action {} for user {}",
