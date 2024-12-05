@@ -63,9 +63,10 @@ run_ci() {
             go test -json ./... > test-report.out
         ;;
         py)
+            poetry shell
             poetry install
             poetry run black --check .
-            pytest --cov=app --cov-report=xml:coverage.xml
+            poetry run pytest --cov=app --cov-report=xml:coverage.xml
         ;;
         *)
             echo "No CI steps for $language in $folder, skipping."
