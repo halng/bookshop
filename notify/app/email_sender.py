@@ -22,6 +22,7 @@ def send_email(subject, body, recipients):
     message.attach(mime_html)
 
     # Create secure connection with server and send email
+    context = ssl.create_default_context()
     try:
         with smtplib.SMTP_SSL(
             host=smpt_server, port=smpt_port, context=context
