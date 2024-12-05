@@ -64,7 +64,7 @@ run_ci() {
         ;;
         py)
             poetry install
-            black --check .
+            poetry run black --check .
             pytest --cov=app --cov-report=xml:coverage.xml
         ;;
         *)
