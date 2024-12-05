@@ -8,10 +8,10 @@ from app.email_sender import send_email
 
 def consume(server: str, topic_pattern: str, group_id: str):
     consumer_config = {
-        'bootstrap.servers': server,
-        'group.id': group_id,
-        'auto.offset.reset': 'earliest',  # Start from the earliest message if no offsets are committed
-        'enable.auto.commit': True  # Automatically commit offsets
+        "bootstrap.servers": server,
+        "group.id": group_id,
+        "auto.offset.reset": "earliest",  # Start from the earliest message if no offsets are committed
+        "enable.auto.commit": True,  # Automatically commit offsets
     }
 
     consumer = Consumer(consumer_config)
@@ -33,9 +33,11 @@ def consume(server: str, topic_pattern: str, group_id: str):
     finally:
         consumer.close()
 
+
 def load_email_template(template: str) -> str:
-    with open(f'./email_template/{template}', 'r') as f:
+    with open(f"./email_template/{template}", "r") as f:
         return f.read()
+
 
 def process_message(msg):
     """
@@ -47,28 +49,32 @@ def process_message(msg):
           "data": {
             "username": "hello",
             "email": "help@gmail.com",
-            "activate_link": "xxx.com",
+            "activation_link": "xxx.com",
             "expired_time": "111"
           }
     }
     """
     try:
-        json_msg = json.loads(msg.value().decode('utf-8'))
-        action = json_msg['action']
+        json_msg = json.loads(msg.value().decode("utf-8"))
+        action = json_msg["action"]
 
         email_template = EMAIL_TEMPLATE[action]
         email_subject = EMAIL_SUBJECT[action]
 
-        data = json_msg['data']
-        user_email = data['email']
-        del data['email']
+        data = json_msg["data"]
+        user_email = data["email"]
+        del data["email"]
 
         email_body = load_email_template(email_template)
 
         for key, value in data.items():
-            email_body = email_body.replace('{'+ key + '}', value)
+            email_body = email_body.replace("{" + key + '}', value)
 
-        logger.info("Process Message: Done - Starting send email with action {} for user {}", action, user_email)
+        logger.info(
+            "Process Message: Done - Starting send email with action {} for user {}",
+            action,
+            user_email,
+        )
         logger.debug("Email body: {}", email_body)
         send_email(subject=email_subject, body=email_body, recipients=user_email)
 
