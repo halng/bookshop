@@ -41,6 +41,7 @@ jobs:
           python-version: '3.12'
 
       - name: Run CI script
+        id: main
         env:
           PSON_TOKEN: ${{ secrets.PSON_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -59,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           COMMENT="**CI Workflow Results**: The build has completed successfully! 🎉"
-          if [[ "${{ job.status }}" != "success" ]]; then
+          if [[ "${{ steps.main.outcome }}" == "failure" ]]; then
             COMMENT="**CI Workflow Results**: The build has failed. 🚨"
           fi
           curl -s -H "Authorization: token $GITHUB_TOKEN" \
