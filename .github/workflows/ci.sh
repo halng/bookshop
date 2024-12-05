@@ -63,7 +63,6 @@ run_ci() {
             go test -json ./... > test-report.out
         ;;
         py)
-            poetry shell
             poetry install
             poetry run black --check .
             poetry run pytest --cov=app --cov-report=xml:coverage.xml
