@@ -8,7 +8,7 @@ import (
 )
 
 var Producer *kafka.Producer
-var NewUserTopic = "notification.active-new-user"
+var NewUserTopic = "notification"
 
 func InitializeKafkaProducer(bootStrapServer string) error {
 	var err error

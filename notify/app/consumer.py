@@ -75,7 +75,6 @@ def process_message(msg):
             action,
             user_email,
         )
-        logger.debug("Email body: {}", email_body)
         send_email(subject=email_subject, body=email_body, recipients=user_email)
 
     except Exception as e:

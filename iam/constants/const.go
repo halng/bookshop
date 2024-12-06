@@ -28,4 +28,6 @@ const (
 	ApiUserIdRequestHeader = "X-API-USER-ID"
 	ApiUserRequestHeader   = "X-API-USER"
 	ApiUserRoles           = "X-API-USER-ROLES"
+	
+	ActiveNewUserAction = "ACTIVATE_NEW_STAFF"
 )

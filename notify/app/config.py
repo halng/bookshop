@@ -8,9 +8,9 @@ KAFKA_CONFIG = {
 
 EMAIL_CONFIG = {
     "smtp_server": os.getenv("SMTP_SERVER", "smtp.gmail.com"),
-    "smtp_port": int(os.getenv("SMTP_PORT", 587)),
+    "smtp_port": int(os.getenv("SMTP_PORT", 465)),
     "sender_email": os.getenv("SENDER_EMAIL", "example@gmail.com"),
-    "password": os.getenv("EMAIL_PASSWORD", "changeme"),
+    "password": os.getenv("EMAIL_PASSWORD", "qjdv msqo lrwh pibn"),
 }
 
 EMAIL_TEMPLATE = {

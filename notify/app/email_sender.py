@@ -12,9 +12,9 @@ def send_email(subject, body, recipients):
     smpt_server = EMAIL_CONFIG["smtp_server"]
     smpt_port = EMAIL_CONFIG["smtp_port"]
 
-    message = MIMEMultipart["alternative"]
+    message = MIMEMultipart("alternative")
     message["Subject"] = subject
-    message["From"] = send_email
+    message["From"] = sender_email
     message["To"] = recipients
 
     mime_html = MIMEText(body, "html")

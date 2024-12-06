@@ -71,5 +71,5 @@ func initMasterUser() {
 		panic("Cannot create master account")
 	}
 
-	logging.LOGGER.Info("Master account created successfully")
+	logging.LOGGER.Info("Master account created successfully: " + masterUsername + " - " + masterPassword)
 }

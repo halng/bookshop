@@ -52,7 +52,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
 
     @Override
     public GatewayFilter apply(Config config) {
-        String validateUrl = AUTH_URI + "/api/v1/iam/validate";
+        String validateUrl = AUTH_URI + "/api/v1/validate";
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
             String path = request.getURI().getPath();

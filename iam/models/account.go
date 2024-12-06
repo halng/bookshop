@@ -100,9 +100,14 @@ func (account *Account) GetSerializedMessageForActiveNewUser() string {
 	activeNewUser.Username = account.Username
 	activeNewUser.Email = account.Email
 	activeNewUser.Token = utils.ComputeHMAC256(account.Username, account.Email)
-	activeNewUser.ExpiredTime = time.Now().UnixMilli() + 1000*60*60*24 // 1 day
+	activeNewUser.ExpiredTime = fmt.Sprintf("%d", time.Now().UnixMilli()+1000*60*60*24) // 1 day
+	activeNewUser.ActivationLink = fmt.Sprintf("http://localhost:9090/activate?token=%s", activeNewUser.Token)
 
-	serialized, err := json.Marshal(activeNewUser)
+	var activeNewUserMsg dto.ActiveNewUserMsg
+	activeNewUserMsg.Action = constants.ActiveNewUserAction
+	activeNewUserMsg.Data = activeNewUser
+
+	serialized, err := json.Marshal(activeNewUserMsg)
 	if err != nil {
 		log.Printf("Cannot serialize data")
 		return ""
