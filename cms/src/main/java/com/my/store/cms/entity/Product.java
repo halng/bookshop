@@ -1,5 +1,9 @@
 package com.my.store.cms.entity;
 
+import java.time.Instant;
+
+import org.springframework.data.annotation.CreatedDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,5 +28,8 @@ public class Product {
     private String id;
 
     private String name;
+
+    @CreatedDate
+    private Instant createdDate;
 
 }

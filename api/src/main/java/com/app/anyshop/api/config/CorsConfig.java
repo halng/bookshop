@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Configuration
 public class CorsConfig {
-    private static final String ALLOWED_HEADERS = "authorization, Content-Type, Authorization, credential";
+    private static final String ALLOWED_HEADERS = "authorization, Content-Type, Authorization, credential, X-API-SECRET-TOKEN, X-API-USER-ID";
     private static final String ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
     private static final String ALLOWED_ORIGIN = "*";
     private static final String MAX_AGE = "3600";

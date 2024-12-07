@@ -25,9 +25,7 @@ def sample_message():
     "app.consumer.load_email_template",
     return_value="Hello {username}, click {activation_link}",
 )  # Mock load_email_template
-def test_process_message_success(
-    mock_load_template, mock_send_email
-):
+def test_process_message_success(mock_load_template, mock_send_email):
     # Arrange: Sample Kafka message payload
     sample_message = {
         "action": "ACTIVATE_NEW_STAFF",

@@ -37,7 +37,7 @@ import reactor.core.publisher.Mono;
 public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterConfig.Config> {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthFilterConfig.class);
-
+    private static final String IAM_SERVICE = "iam";
     private final WebClient.Builder webClientBuilder;
 
     @Autowired private ObjectMapper objectMapper;
@@ -61,6 +61,12 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
             Set<URI> uris =
                     exchange.getAttributeOrDefault(GATEWAY_ORIGINAL_REQUEST_URL_ATTR, Collections.emptySet());
             String originalUri = (uris.isEmpty()) ? "Unknown" : uris.iterator().next().toString();
+
+            //Also exclude all the incoming request to IAM service.
+            if (originalUri.contains(IAM_SERVICE)) {
+                return chain.filter(exchange);
+            }
+
             Route route = exchange.getAttribute(GATEWAY_ROUTE_ATTR);
             URI routeUri = exchange.getAttribute(GATEWAY_REQUEST_URL_ATTR);
             if (route == null || routeUri == null) {
@@ -70,6 +76,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
                     "Incoming request %s is routed to id: %s, uri: %s"
                             .formatted(originalUri, route.getId(), routeUri));
 
+            // TODO: change get token from header instead of `authorization`
             if (ExcludeUrlConfig.isSecure(path, method)) {
                 String bearerToken =
                         Objects.requireNonNull(request.getHeaders().get("authorization")).get(0);

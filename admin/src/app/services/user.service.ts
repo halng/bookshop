@@ -56,7 +56,7 @@ export class UserService {
 
     return this.http.post(`${this.BASE_URL}/create-staff`, data, {
       headers: {
-        'X-API-SECRET-TOKEN': `${token}`,
+        'X-API-SECRET-TOKEN': token,
         'X-API-USER-ID': id,
       },
     });
