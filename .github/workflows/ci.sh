@@ -53,7 +53,6 @@ run_ci() {
             #   ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
             mvn clean compile
             mvn test
-            mvn install
         ;;
         js | ts)
             npm install
