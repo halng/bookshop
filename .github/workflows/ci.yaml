@@ -35,8 +35,13 @@ jobs:
         uses: actions/setup-go@v4
         with:
           go-version: '1.23.1'
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Run CI script
+        id: main
         env:
           PSON_TOKEN: ${{ secrets.PSON_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +60,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           COMMENT="**CI Workflow Results**: The build has completed successfully! 🎉"
-          if [[ "${{ job.status }}" != "success" ]]; then
+          if [[ "${{ steps.main.outcome }}" == "failure" ]]; then
             COMMENT="**CI Workflow Results**: The build has failed. 🚨"
           fi
           curl -s -H "Authorization: token $GITHUB_TOKEN" \

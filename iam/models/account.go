@@ -12,6 +12,7 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"os"
 	"time"
 )
 
@@ -100,9 +101,17 @@ func (account *Account) GetSerializedMessageForActiveNewUser() string {
 	activeNewUser.Username = account.Username
 	activeNewUser.Email = account.Email
 	activeNewUser.Token = utils.ComputeHMAC256(account.Username, account.Email)
-	activeNewUser.ExpiredTime = time.Now().UnixMilli() + 1000*60*60*24 // 1 day
+	activeNewUser.ExpiredTime = fmt.Sprintf("%d", time.Now().UnixMilli()+1000*60*60*24) // 1 day
 
-	serialized, err := json.Marshal(activeNewUser)
+	// build activation link for new user
+	apiHost := os.Getenv("API_GATEWAY_HOST")
+	activeNewUser.ActivationLink = fmt.Sprintf("%s/api/v1/iam/activate?token=%s", apiHost, activeNewUser.Token)
+
+	var activeNewUserMsg dto.ActiveNewUserMsg
+	activeNewUserMsg.Action = constants.ActiveNewUserAction
+	activeNewUserMsg.Data = activeNewUser
+
+	serialized, err := json.Marshal(activeNewUserMsg)
 	if err != nil {
 		log.Printf("Cannot serialize data")
 		return ""

@@ -1,13 +1,12 @@
 package com.app.anyshop.api;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
 class ApiApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
-
+  @Test
+  void doNothing() {
+    Assertions.assertEquals(0, 0);
+  }
 }

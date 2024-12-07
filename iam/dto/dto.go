@@ -31,8 +31,14 @@ type LoginResponse struct {
 }
 
 type ActiveNewUser struct {
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	Token       string `json:"token"`
-	ExpiredTime int64  `json:"expiredTime"`
+	Username       string `json:"username"`
+	Email          string `json:"email"`
+	Token          string `json:"token"`
+	ExpiredTime    string `json:"expired_time"`
+	ActivationLink string `json:"activation_link"`
+}
+
+type ActiveNewUserMsg struct {
+	Action string        `json:"action"`
+	Data   ActiveNewUser `json:"data"`
 }

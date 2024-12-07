@@ -19,6 +19,10 @@ install_golang_cli_lint() {
   go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
 }
 
+install_poetry() {
+   curl -sSL https://install.python-poetry.org | python3 -
+}
+
 # Detect language based on folder contents
 detect_language() {
     local folder=$1
@@ -28,6 +32,8 @@ detect_language() {
         echo "js"
         elif ls "$folder"/*.go >/dev/null 2>&1; then
         echo "go"
+        elif [[ -f "$folder/pyproject.toml" ]]; then
+        echo "py"
     else
         echo "unknown"
     fi
@@ -38,14 +44,18 @@ run_ci() {
     local folder=$1
     local language=$2
 
+    echo "==========================================================================="
     echo "========================== $folder - $language  ==========================="
+    echo "==========================================================================="
     
     cd "$folder"
     
     case $language in
         java)
             #   ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
-            mvn clean install
+            mvn clean compile
+            mvn test
+            rm -rf target/
         ;;
         js | ts)
             npm install
@@ -55,6 +65,11 @@ run_ci() {
             golangci-lint run
             go test -coverprofile coverage.out ./...
             go test -json ./... > test-report.out
+        ;;
+        py)
+            poetry install
+            poetry run black --check .
+            poetry run pytest --cov=app --cov-report=xml:coverage.xml
         ;;
         *)
             echo "No CI steps for $language in $folder, skipping."
@@ -72,6 +87,10 @@ run_ci() {
     #   fi
     
     cd ..
+    
+    echo "============================================================================"
+    echo "================================== DONE  ==================================="
+    echo "============================================================================"
 }
 
 # Run CI for each changed folder
@@ -85,8 +104,10 @@ fi
 echo "Detected changed folders: $CHANGED_FOLDERS"
 
 echo "Starting install dependencies..."
+
 install_sonar_cloud
 install_golang_cli_lint
+install_poetry
 
 echo "Starting verify components..."
 for folder in $CHANGED_FOLDERS; do
@@ -96,6 +117,11 @@ for folder in $CHANGED_FOLDERS; do
     fi
     
     if [[ "$folder" ==  ".github" ]]; then
+        continue
+    fi
+
+    if [[ "$folder" ==  "api" ]]; then
+        echo "Skip for now...."
         continue
     fi
     

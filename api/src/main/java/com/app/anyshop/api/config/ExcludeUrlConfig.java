@@ -10,7 +10,7 @@ public class ExcludeUrlConfig {
 
     static {
         excludedUrl = new HashMap<>();
-        excludedUrl.put("register", HttpMethod.POST);
+        excludedUrl.put("create-staff", HttpMethod.POST);
         excludedUrl.put("login", HttpMethod.POST);
         excludedUrl.put("image", HttpMethod.GET);
         excludedUrl.put("active-account", HttpMethod.POST);
