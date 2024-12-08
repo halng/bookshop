@@ -83,8 +83,12 @@ run_ci() {
     esac
     
     local project_key="anyshop_$folder"
-    sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
     
+    if [[ "$language" ==  "java" ]]; then
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$project_key
+    else
+        sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
+    fi
     # Build and push Docker image
     #   if [[ -f "Dockerfile" ]]; then
     #     docker build -t $DOCKER_USERNAME/$folder:latest .
