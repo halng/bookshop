@@ -3,9 +3,15 @@
 set -e
 
 # Detect changed folders
-detect_changed_folders() {
-    git fetch origin main
-    echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
+detect_changed_folders() {\
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if [[ "$current_branch" == "main" ]]; then
+        echo "$(ls -d */ | cut -f1 -d'/')"
+    else
+        git fetch origin main
+        echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
+    fi
+    
 }
 
 install_sonar_cloud() {
@@ -45,7 +51,7 @@ run_ci() {
     local language=$2
 
     echo "==========================================================================="
-    echo "========================== $folder - $language  ==========================="
+    echo "== $folder - $language  "
     echo "==========================================================================="
     
     cd "$folder"
@@ -53,9 +59,9 @@ run_ci() {
     case $language in
         java)
             #   ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
-            mvn clean compile
-            mvn test
-            rm -rf target/
+            mvn clean
+            mvn install -DskipTests=true
+            mvn verify
         ;;
         js | ts)
             npm install
@@ -77,8 +83,12 @@ run_ci() {
     esac
     
     local project_key="anyshop_$folder"
-    sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
-    
+
+    if [[ "$language" ==  "java" ]]; then
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=$PSON_TOKEN -Dsonar.projectKey=$project_key
+    else
+        sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
+    fi
     # Build and push Docker image
     #   if [[ -f "Dockerfile" ]]; then
     #     docker build -t $DOCKER_USERNAME/$folder:latest .
@@ -117,11 +127,6 @@ for folder in $CHANGED_FOLDERS; do
     fi
     
     if [[ "$folder" ==  ".github" ]]; then
-        continue
-    fi
-
-    if [[ "$folder" ==  "api" ]]; then
-        echo "Skip for now...."
         continue
     fi
     
