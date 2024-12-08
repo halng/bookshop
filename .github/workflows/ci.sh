@@ -83,9 +83,9 @@ run_ci() {
     esac
     
     local project_key="anyshop_$folder"
-    
+
     if [[ "$language" ==  "java" ]]; then
-        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=$project_key
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=$PSON_TOKEN -Dsonar.projectKey=$project_key
     else
         sonar-scanner -Dsonar.token=$PSON_TOKEN -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=tanhao111 -Dsonar.projectKey=$project_key -Dsonar.projectName=$folder
     fi
