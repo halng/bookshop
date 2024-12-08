@@ -3,9 +3,15 @@
 set -e
 
 # Detect changed folders
-detect_changed_folders() {
-    git fetch origin main
-    echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
+detect_changed_folders() {\
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if [[ "$current_branch" == "main" ]]; then
+        echo "$(ls -d */ | cut -f1 -d'/')"
+    else
+        git fetch origin main
+        echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
+    fi
+    
 }
 
 install_sonar_cloud() {
@@ -45,7 +51,7 @@ run_ci() {
     local language=$2
 
     echo "==========================================================================="
-    echo "========================== $folder - $language  ==========================="
+    echo "== $folder - $language  "
     echo "==========================================================================="
     
     cd "$folder"
@@ -53,9 +59,9 @@ run_ci() {
     case $language in
         java)
             #   ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
-            mvn clean compile
-            mvn test
-            rm -rf target/
+            mvn clean
+            mvn install -DskipTests=true
+            mvn verify
         ;;
         js | ts)
             npm install
@@ -117,11 +123,6 @@ for folder in $CHANGED_FOLDERS; do
     fi
     
     if [[ "$folder" ==  ".github" ]]; then
-        continue
-    fi
-
-    if [[ "$folder" ==  "api" ]]; then
-        echo "Skip for now...."
         continue
     fi
     
