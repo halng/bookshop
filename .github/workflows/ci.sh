@@ -125,7 +125,7 @@ for folder in $CHANGED_FOLDERS; do
         echo "Folder $folder does not exist, skipping."
         continue
     fi
-    
+
     if [[ "$folder" == ".github" || "$folder" == "shop" || "$folder" == "cms" || "$folder" == "script" ]]; then
         continue
     fi
