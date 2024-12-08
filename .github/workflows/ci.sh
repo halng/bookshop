@@ -6,7 +6,7 @@ set -e
 detect_changed_folders() {\
     current_branch=$(git rev-parse --abbrev-ref HEAD)
     if [[ "$current_branch" == "main" ]]; then
-        echo "$(ls -d */ | cut -f1 -d'/')"
+        echo "$(ls -d */ | cut -f1 -d'/')" 
     else
         git fetch origin main
         echo "$(git diff --name-only origin/main | awk -F'/' '{print $1}' | sort -u)"
@@ -126,7 +126,7 @@ for folder in $CHANGED_FOLDERS; do
         continue
     fi
     
-    if [[ "$folder" ==  ".github" ]]; then
+    if [[ "$folder" == ".github" || "$folder" == "shop" || "$folder" == "cms" || "$folder" == "script" ]]; then
         continue
     fi
     
