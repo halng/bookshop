@@ -4,12 +4,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/tanhaok/megastore/constants"
-	"github.com/tanhaok/megastore/db"
-	"github.com/tanhaok/megastore/dto"
-	"github.com/tanhaok/megastore/utils"
+	"github.com/halng/anyshop/constants"
+	"github.com/halng/anyshop/db"
+	"github.com/halng/anyshop/dto"
+	"github.com/halng/anyshop/logging"
+	"github.com/halng/anyshop/utils"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"os"
 	"time"
 )
 
@@ -22,6 +25,7 @@ type Account struct {
 	Email     string    `json:"email"`
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
+	RoleId    string    `json:"roleId"`
 	CreateAt  int64     `json:"createAt"`
 	UpdateAt  int64     `json:"updateAt"`
 	CreateBy  string    `json:"createBy"`
@@ -32,7 +36,9 @@ func (account *Account) SaveAccount() (*Account, error) {
 
 	account.ID = uuid.New()
 	account.CreateAt = time.Now().Unix()
-	account.CreateBy = constants.DefaultCreator
+	if account.CreateBy != "" {
+		account.CreateBy = constants.DefaultCreator
+	}
 
 	if err := db.DB.Postgres.Create(&account).Error; err != nil {
 		return &Account{}, err
@@ -43,12 +49,6 @@ func (account *Account) SaveAccount() (*Account, error) {
 }
 
 func (account *Account) BeforeSave() error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(account.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-
-	account.Password = string(hashedPassword)
 	account.UpdateAt = time.Now().Unix()
 	account.UpdateBy = account.Username
 	return nil
@@ -72,7 +72,13 @@ func (account *Account) ComparePassword(password string) bool {
 }
 
 func (account *Account) GenerateAccessToken() string {
-	jwtToken, err := utils.GenerateJWT(account.ID.String(), account.Username)
+
+	role, err := GetRoleById(account.RoleId)
+	if err != nil {
+		logging.LOGGER.Error("Cannot get role for user %s ", zap.Any("account", account))
+		return ""
+	}
+	jwtToken, err := utils.GenerateJWT(account.ID.String(), account.Username, role)
 	if err != nil {
 		log.Printf("Cannot generate access token for user %s ", account.Username)
 		return ""
@@ -95,9 +101,17 @@ func (account *Account) GetSerializedMessageForActiveNewUser() string {
 	activeNewUser.Username = account.Username
 	activeNewUser.Email = account.Email
 	activeNewUser.Token = utils.ComputeHMAC256(account.Username, account.Email)
-	activeNewUser.ExpiredTime = time.Now().UnixMilli() + 1000*60*60*24 // 1 day
+	activeNewUser.ExpiredTime = fmt.Sprintf("%d", time.Now().UnixMilli()+1000*60*60*24) // 1 day
 
-	serialized, err := json.Marshal(activeNewUser)
+	// build activation link for new user
+	apiHost := os.Getenv("API_GATEWAY_HOST")
+	activeNewUser.ActivationLink = fmt.Sprintf("%s/api/v1/iam/activate?token=%s", apiHost, activeNewUser.Token)
+
+	var activeNewUserMsg dto.ActiveNewUserMsg
+	activeNewUserMsg.Action = constants.ActiveNewUserAction
+	activeNewUserMsg.Data = activeNewUser
+
+	serialized, err := json.Marshal(activeNewUserMsg)
 	if err != nil {
 		log.Printf("Cannot serialize data")
 		return ""

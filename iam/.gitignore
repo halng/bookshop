@@ -1,2 +1,7 @@
 .idea/
 cover.out
+.env
+
+vendor/
+
+iam

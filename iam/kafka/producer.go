@@ -3,12 +3,12 @@ package kafka
 import (
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/tanhaok/megastore/logging"
+	"github.com/halng/anyshop/logging"
 	"go.uber.org/zap"
 )
 
 var Producer *kafka.Producer
-var NewUserTopic = "notification.active-new-user"
+var NewUserTopic = "notification"
 
 func InitializeKafkaProducer(bootStrapServer string) error {
 	var err error

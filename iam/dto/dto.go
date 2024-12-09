@@ -13,7 +13,6 @@ type ErrorDTO struct {
 
 type RegisterRequest struct {
 	Username  string `json:"username" validate:"required"`
-	Password  string `json:"password" validate:"required"`
 	Email     string `json:"email" validate:"required,email"`
 	FirstName string `json:"firstname" validate:"required"`
 	LastName  string `json:"lastname" validate:"required"`
@@ -26,11 +25,20 @@ type LoginRequest struct {
 
 type LoginResponse struct {
 	ApiToken string `json:"api-token"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
+	ID       string `json:"id"`
 }
 
 type ActiveNewUser struct {
-	Username    string `json:"username"`
-	Email       string `json:"email"`
-	Token       string `json:"token"`
-	ExpiredTime int64  `json:"expiredTime"`
+	Username       string `json:"username"`
+	Email          string `json:"email"`
+	Token          string `json:"token"`
+	ExpiredTime    string `json:"expired_time"`
+	ActivationLink string `json:"activation_link"`
+}
+
+type ActiveNewUserMsg struct {
+	Action string        `json:"action"`
+	Data   ActiveNewUser `json:"data"`
 }
