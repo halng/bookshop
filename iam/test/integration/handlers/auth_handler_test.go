@@ -7,8 +7,10 @@ import (
 	"testing"
 
 	"github.com/halng/anyshop/constants"
+	"github.com/halng/anyshop/db"
 	handlers2 "github.com/halng/anyshop/handlers"
 	"github.com/halng/anyshop/middleware"
+	"github.com/halng/anyshop/models"
 	"github.com/halng/anyshop/test/integration"
 	"github.com/stretchr/testify/assert"
 )
@@ -281,31 +283,17 @@ func TestActivateStaff(t *testing.T) {
 	router := integration.SetUpRouter()
 	router.GET(urlPathActivate, handlers2.Activate)
 
-	t.Run("Activate: when token and username are missing", func(t *testing.T) {
-		// Act
-		code, res := integration.ServeRequest(router, "GET", urlPathActivate, "")
+	t.Run("Activate: when require parameters are missing", func(t *testing.T) {
+		invalidPath := [3]string {"", "?username=testuser", "?token=testtoken"}
+		for _, path := range invalidPath {
 
+			// Act
+			code, res := integration.ServeRequest(router, "GET", urlPathActivate + path, "")
+		
 		// Assert
-		assert.Equal(t, code, http.StatusBadRequest)
-		assert.Equal(t, res, `{"code":400,"error":"Missing required parameters. Please check your input","status":"ERROR"}`)
-	})
-
-	t.Run("Activate: when token is missing", func(t *testing.T) {
-		// Act
-		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?username=testuser", "")
-
-		// Assert
-		assert.Equal(t, code, http.StatusBadRequest)
-		assert.Equal(t, res, `{"code":400,"error":"Missing required parameters. Please check your input","status":"ERROR"}`)
-	})
-
-	t.Run("Activate: when username is missing", func(t *testing.T) {
-		// Act
-		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?token=testtoken", "")
-
-		// Assert
-		assert.Equal(t, code, http.StatusBadRequest)
-		assert.Equal(t, res, `{"code":400,"error":"Missing required parameters. Please check your input","status":"ERROR"}`)
+			assert.Equal(t, code, http.StatusBadRequest)
+			assert.Equal(t, res, `{"code":400,"error":"Missing required parameters. Please check your input","status":"ERROR"}`)
+		}
 	})
 
 	t.Run("Activate: when token is not found in cache", func(t *testing.T) {
@@ -364,6 +352,7 @@ func TestActivateStaff(t *testing.T) {
 	// 	assert.Equal(t, constants.ACCOUNT_STATUS_ACTIVE, updatedAccount.Status)
 	// })
 }
+
 
 func TestMain(m *testing.M) {
 	integration.SetupTestServer()
