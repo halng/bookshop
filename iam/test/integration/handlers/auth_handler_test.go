@@ -7,10 +7,8 @@ import (
 	"testing"
 
 	"github.com/halng/anyshop/constants"
-	"github.com/halng/anyshop/db"
 	handlers2 "github.com/halng/anyshop/handlers"
 	"github.com/halng/anyshop/middleware"
-	"github.com/halng/anyshop/models"
 	"github.com/halng/anyshop/test/integration"
 	"github.com/stretchr/testify/assert"
 )
