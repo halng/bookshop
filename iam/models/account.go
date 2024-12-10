@@ -26,6 +26,7 @@ type Account struct {
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	RoleId    string    `json:"roleId"`
+	Status    string    `json:"status"`
 	CreateAt  int64     `json:"createAt"`
 	UpdateAt  int64     `json:"updateAt"`
 	CreateBy  string    `json:"createBy"`
@@ -46,6 +47,13 @@ func (account *Account) SaveAccount() (*Account, error) {
 
 	return account, nil
 
+}
+
+func (account *Account) UpdateAccount() error {
+	if err := db.DB.Postgres.Save(&account).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (account *Account) BeforeSave() error {
@@ -96,16 +104,25 @@ func (account *Account) GenerateAccessToken() string {
 	return cacheId
 }
 
-func (account *Account) GetSerializedMessageForActiveNewUser() string {
+func (account *Account) GenerateAndSaveSerializedMessageForActiveNewUser() string {
 	var activeNewUser dto.ActiveNewUser
 	activeNewUser.Username = account.Username
 	activeNewUser.Email = account.Email
 	activeNewUser.Token = utils.ComputeHMAC256(account.Username, account.Email)
-	activeNewUser.ExpiredTime = fmt.Sprintf("%d", time.Now().UnixMilli()+1000*60*60*24) // 1 day
+	expiredTime := time.Now().UnixMilli() + 1000*60*60*24
+	activeNewUser.ExpiredTime = fmt.Sprintf("%d", expiredTime) // 1 day
 
 	// build activation link for new user
 	apiHost := os.Getenv("API_GATEWAY_HOST")
-	activeNewUser.ActivationLink = fmt.Sprintf("%s/api/v1/iam/activate?token=%s", apiHost, activeNewUser.Token)
+	activeNewUser.ActivationLink = fmt.Sprintf("%s/api/v1/iam/activate?username=%s&token=%s", apiHost, activeNewUser.Username, activeNewUser.Token)
+
+	// save active token to redis
+	key := fmt.Sprintf(constants.REDIS_PENDING_ACTIVE_STAFF_KEY, activeNewUser.Username)
+	err := db.SaveDataToCache(key, activeNewUser.Token)
+	if err != nil {
+		logging.LOGGER.Error("Cannot save token in cache")
+		return ""
+	}
 
 	var activeNewUserMsg dto.ActiveNewUserMsg
 	activeNewUserMsg.Action = constants.ActiveNewUserAction

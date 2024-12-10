@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/halng/anyshop/constants"
 	"github.com/halng/anyshop/db"
@@ -12,7 +14,6 @@ import (
 	"github.com/halng/anyshop/utils"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 )
 
 // ========================= Functions =========================
@@ -58,6 +59,7 @@ func CreateStaff(c *gin.Context) {
 	account.LastName = userInput.LastName
 	account.FirstName = userInput.FirstName
 	account.CreateBy = requesterId
+	account.Status = constants.ACCOUNT_STATUS_INACTIVE
 
 	// get role id for staff
 	roleId, err := models.GetRoleIdByName(models.RoleStaff)
@@ -78,8 +80,7 @@ func CreateStaff(c *gin.Context) {
 	}
 
 	// send msg to kafka
-	serializedMessage := account.GetSerializedMessageForActiveNewUser()
-	_ = db.SaveActiveTokenToCache(account.Username, serializedMessage)
+	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
 
 	kafka.PushMessageNewUser(serializedMessage)
 
@@ -142,4 +143,40 @@ func Validate(c *gin.Context) {
 	c.Header(constants.ApiUserRoles, role)
 	c.Header(constants.ApiUserRequestHeader, username)
 
+}
+
+func Activate(c *gin.Context) {
+	token := c.Query("token")
+	username := c.Query("username")
+
+	if token == "" || username == "" {
+		ResponseErrorHandler(c, http.StatusBadRequest, constants.MissingParams, nil)
+		return
+	}
+
+	savedData, err := db.GetDataFromKey(fmt.Sprintf(constants.REDIS_PENDING_ACTIVE_STAFF_KEY, username))
+	if err != nil || savedData == nil {
+		ResponseErrorHandler(c, http.StatusNotFound, constants.TokenNotFount, nil)
+		return
+	}
+
+	if token != savedData {
+		ResponseErrorHandler(c, http.StatusUnauthorized, constants.Unauthorized, nil)
+		return
+	}
+
+	account, err := models.GetAccountByUsername(username)
+	if err != nil {
+		ResponseErrorHandler(c, http.StatusNotFound, constants.AccountNotFound, nil)
+		return
+	}
+
+	account.Status = constants.ACCOUNT_STATUS_ACTIVE
+	err = account.UpdateAccount()
+	if err != nil {
+		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
+		return
+	}
+
+	ResponseSuccessHandler(c, http.StatusOK, nil)
 }

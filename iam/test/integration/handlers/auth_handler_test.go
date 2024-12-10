@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"github.com/halng/anyshop/db"
+	"github.com/halng/anyshop/models"
 	"net/http"
 	"os"
 	"testing"
@@ -272,6 +274,94 @@ func TestValidate(t *testing.T) {
 		assert.Equal(t, "changeme", resHeaders.Get(constants.ApiUserRequestHeader))
 		assert.Equal(t, authData["id"].(string), resHeaders.Get(constants.ApiUserIdRequestHeader))
 
+	})
+}
+
+func TestActivateStaff(t *testing.T) {
+	urlPathActivate := "/api/v1/activate"
+
+	router := integration.SetUpRouter()
+	router.GET(urlPathActivate, handlers2.Activate)
+
+	t.Run("Activate: when require parameters are missing", func(t *testing.T) {
+		invalidPath := [3]string{"", "?username=testuser", "?token=testtoken"}
+		for _, path := range invalidPath {
+
+			// Act
+			code, res := integration.ServeRequest(router, "GET", urlPathActivate+path, "")
+
+			// Assert
+			assert.Equal(t, code, http.StatusBadRequest)
+			assert.Equal(t, res, `{"code":400,"error":"Missing required parameters. Please check your input","status":"ERROR"}`)
+		}
+	})
+
+	t.Run("Activate: when token is not found in cache", func(t *testing.T) {
+		// Act
+		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?token=testtoken&username=testuser", "")
+
+		// Assert
+		assert.Equal(t, code, http.StatusNotFound)
+		assert.Equal(t, res, `{"code":404,"error":"Your login session has expired. Please login again","status":"ERROR"}`)
+	})
+
+	t.Run("Activate: when token is invalid", func(t *testing.T) {
+		// Mock cache data
+		err := db.SaveDataToCache("pending_active_user_testuser", `validtoken`)
+		if err != nil {
+			return
+		}
+
+		// Act
+		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?token=invalidtoken&username=testuser", "")
+
+		// Assert
+		assert.Equal(t, code, http.StatusUnauthorized)
+		assert.Equal(t, res, `{"code":401,"error":"Unauthorized","status":"ERROR"}`)
+	})
+
+	t.Run("Activate: when account is not found", func(t *testing.T) {
+		// Mock cache data
+		err := db.SaveDataToCache("pending_active_user_testuser", `validtoken`)
+		if err != nil {
+			return
+		}
+
+		// Act
+		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?token=validtoken&username=testuser", "")
+
+		// Assert
+		assert.Equal(t, code, http.StatusNotFound)
+		assert.Equal(t, res, `{"code":404,"error":"Account not found","status":"ERROR"}`)
+	})
+
+	t.Run("Activate: when account is successfully activated", func(t *testing.T) {
+		// Mock cache data
+		err := db.SaveDataToCache("pending_active_user_testuser", `validtoken`)
+		if err != nil {
+			return
+		}
+
+		// Mock account data
+		account := models.Account{
+			Username: "testuser",
+			Status:   constants.ACCOUNT_STATUS_INACTIVE,
+		}
+		_, err = account.SaveAccount()
+		if err != nil {
+			return
+		}
+
+		// Act
+		code, res := integration.ServeRequest(router, "GET", urlPathActivate+"?token=validtoken&username=testuser", "")
+
+		// Assert
+		assert.Equal(t, code, http.StatusOK)
+		assert.Equal(t, res, `{"code":200,"data":null,"status":"SUCCESS"}`)
+
+		// Verify account status
+		updatedAccount, _ := models.GetAccountByUsername("testuser")
+		assert.Equal(t, constants.ACCOUNT_STATUS_ACTIVE, updatedAccount.Status)
 	})
 }
 
