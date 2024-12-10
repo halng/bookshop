@@ -9,7 +9,7 @@
 | `gateway`| api gateway| Java | | |
 | `cms`| content management system -  For managing product information, categories, etc.| Java | | |
 | `search` | product search | Java | | |
-| `iam`| identify and access management - JWT, OAuth for secure user sessions| Go | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=megastore_iam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=megastore_iam) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=megastore_iam&metric=coverage)](https://sonarcloud.io/summary/new_code?id=megastore_iam)|
+| `iam`| identify and access management - JWT, OAuth for secure user sessions| Go |[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyshop_iam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=anyshop_iam) |[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=anyshop_iam&metric=coverage)](https://sonarcloud.io/summary/new_code?id=anyshop_iam) |
 | `ims`| inventory management system| Go | | |
 | `oms`| order management system - Handle order processing, inventory management| Go | | |
 | `pgi`| payment gateway integration - PayPal, Stripe, or other payment processors | Rust | | |
