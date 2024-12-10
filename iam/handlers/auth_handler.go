@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -81,8 +80,7 @@ func CreateStaff(c *gin.Context) {
 	}
 
 	// send msg to kafka
-	serializedMessage := account.GetSerializedMessageForActiveNewUser()
-	_ = db.SaveActiveTokenToCache(account.Username, serializedMessage)
+	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
 
 	kafka.PushMessageNewUser(serializedMessage)
 
@@ -150,27 +148,20 @@ func Validate(c *gin.Context) {
 func Activate(c *gin.Context) {
 	token := c.Query("token")
 	username := c.Query("username")
-	
+
 	if token == "" || username == "" {
 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MissingParams, nil)
 		return
 	}
 
-	savedData, err := db.GetDataFromKey("active_" + username)
+	savedData, err := db.GetDataFromKey(fmt.Sprintf(constants.REDIS_PENDING_ACTIVE_STAFF_KEY, username))
 	if err != nil || savedData == nil {
 		ResponseErrorHandler(c, http.StatusNotFound, constants.TokenNotFount, nil)
 		return
 	}
-	
-	var savedDataDto dto.ActiveNewUserMsg
-	if err = json.Unmarshal(savedData.([]byte), &savedDataDto); err != nil {
-		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
-		return
-	}
 
-	
-	if token != savedDataDto.Data.Token {
-		ResponseErrorHandler(c, http.StatusUnauthorized, constants.TokenNotFount, nil)
+	if token != savedData {
+		ResponseErrorHandler(c, http.StatusUnauthorized, constants.Unauthorized, nil)
 		return
 	}
 
@@ -181,7 +172,7 @@ func Activate(c *gin.Context) {
 	}
 
 	account.Status = constants.ACCOUNT_STATUS_ACTIVE
-	_, err = account.SaveAccount()
+	err = account.UpdateAccount()
 	if err != nil {
 		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
 		return
