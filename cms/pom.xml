@@ -120,6 +120,11 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>2.1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -176,7 +181,6 @@
                                 <exclude>**/entity/**</exclude>
                                 <exclude>**/viewmodel/**</exclude>
                                 <exclude>**/exceptions/**</exclude>
-                                <exclude>**/repository/**</exclude>
                                 <exclude>**/*CmsApplication.*</exclude>
                             </excludes>
                             <rules>
