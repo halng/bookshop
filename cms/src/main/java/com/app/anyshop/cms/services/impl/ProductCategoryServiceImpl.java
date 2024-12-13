@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
+@SuppressWarnings("rawtypes")
 public class ProductCategoryServiceImpl implements ProductCategoryService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProductCategoryServiceImpl.class);
@@ -116,7 +117,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     redisUtils.saveDataToCache(key, vm, Message.Constants.DEFAULT_EXPIRED_TIME);
     LOGGER.info("Update category with id {} and save to redis. Waiting for approval", id);
 
-    return new ResVM(HttpStatus.OK, Message.UPDATED_WAITING_APPROVAL, null, null);
+    return new ResVM<>(HttpStatus.OK, Message.UPDATED_WAITING_APPROVAL, null, null);
   }
 
   @Override
@@ -137,7 +138,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     productCategory.setStatus(Status.valueOf(status));
     productCategoryRepo.save(productCategory);
 
-    return new ResVM(HttpStatus.OK, Message.SUCCESS, null, null);
+    return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null, null);
   }
 
   @Override
@@ -151,7 +152,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     Set<DetailProductCategoryResVM> result = new HashSet<>();
     for (var productCategory : productCategories.getContent()) {
-
       result.add(
           new DetailProductCategoryResVM(
               productCategory.getId(),

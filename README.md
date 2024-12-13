@@ -20,5 +20,6 @@
 | `recommend` | recommend system | python | | |
 | `support` | customer support | NodeJS | | |
 | `feedback`| user feedback | NodeJS| | |
+| `media` | media: put and get image, video to/from s3 | NodeJS | | |
 | `shop`| user page| Typescript | | |
 | `admin`| admin page| Typescript | | |

@@ -56,19 +56,11 @@ install_poetry() {
     curl -sSL https://install.python-poetry.org | python3 -
 }
 
-install_pmd(){
-    echo "Installing PMD..."
-    cd $HOME
-    wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F7.8.0/pmd-dist-7.8.0-bin.zip
-    unzip pmd-dist-7.8.0-bin.zip
-    alias pmd="$HOME/pmd-bin-7.8.0/bin/pmd"
-}
 
 echo "Starting install dependencies..."
 install_sonar_cloud
 install_golang_cli_lint
 install_poetry
-install_pmd
 
 
 ################################################################################################################################
@@ -150,8 +142,7 @@ for folder in $CHANGED_FOLDERS; do
         continue
     fi
 
-    # Temporary exclude cms folder
-    if [[ "$folder" == ".github" || "$folder" == "shop" || "$folder" == "cms" || "$folder" == "script" || "$folder" == ".vscode" ]]; then
+    if [[ "$folder" == ".github" || "$folder" == "shop" || "$folder" == "script" || "$folder" == ".vscode" ]]; then
         continue
     fi
     

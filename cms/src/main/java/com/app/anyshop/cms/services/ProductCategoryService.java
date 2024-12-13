@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 /** Service interface for managing product categories. */
 @Service
+@SuppressWarnings("rawtypes")
 public interface ProductCategoryService {
 
   /**
