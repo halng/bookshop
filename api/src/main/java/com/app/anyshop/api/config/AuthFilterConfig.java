@@ -63,7 +63,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
       LOG.info("*****************************************************************************");
       Set<URI> uris =
           exchange.getAttributeOrDefault(GATEWAY_ORIGINAL_REQUEST_URL_ATTR, Collections.emptySet());
-      String originalUri = (uris.isEmpty()) ? "Unknown" : uris.iterator().next().toString();
+      String originalUri = uris.isEmpty() ? "Unknown" : uris.iterator().next().toString();
 
       // Also exclude all the incoming request to IAM service.
       if (originalUri.contains(IAM_SERVICE)) {
