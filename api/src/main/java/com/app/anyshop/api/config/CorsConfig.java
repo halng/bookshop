@@ -21,7 +21,7 @@ public class CorsConfig {
     private static final String MAX_AGE = "3600";
 
     @Bean
-    WebFilter corsWebFilter() {
+    public WebFilter corsWebFilter() {
         return (ServerWebExchange sse, WebFilterChain wfc) -> {
 
             ServerHttpRequest request = sse.getRequest();
