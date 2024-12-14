@@ -1,13 +1,13 @@
 package com.app.anyshop.cms.unit.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.app.anyshop.cms.utils.EntityAuditorAware;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EntityAuditorAwareTest {
   private final EntityAuditorAware entityAuditorAware = new EntityAuditorAware();

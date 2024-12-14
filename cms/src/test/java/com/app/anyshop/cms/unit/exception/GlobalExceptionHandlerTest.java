@@ -1,5 +1,6 @@
 package com.app.anyshop.cms.unit.exception;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.app.anyshop.cms.dto.ErrorVM;
 import com.app.anyshop.cms.exceptions.GlobalExceptionHandler;
@@ -11,34 +12,32 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 public class GlobalExceptionHandlerTest {
 
-    @InjectMocks
-    private GlobalExceptionHandler globalExceptionHandler;
+  @InjectMocks private GlobalExceptionHandler globalExceptionHandler;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+  @BeforeEach
+  void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
 
-    @Test
-    void notFoundExceptionReturnsNotFoundStatus() {
-        NotFoundException exception = new NotFoundException("Resource not found");
+  @Test
+  void notFoundExceptionReturnsNotFoundStatus() {
+    NotFoundException exception = new NotFoundException("Resource not found");
 
-        ResponseEntity<ErrorVM> response = globalExceptionHandler.notFoundException(exception);
+    ResponseEntity<ErrorVM> response = globalExceptionHandler.notFoundException(exception);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getBody().code());
-        assertEquals("Resource not found", response.getBody().msg());
-    }
+    assertEquals(HttpStatus.NOT_FOUND, response.getBody().code());
+    assertEquals("Resource not found", response.getBody().msg());
+  }
 
-    @Test
-    void notFoundExceptionHandlesNullMessage() {
-        NotFoundException exception = new NotFoundException(null);
+  @Test
+  void notFoundExceptionHandlesNullMessage() {
+    NotFoundException exception = new NotFoundException(null);
 
-        ResponseEntity<ErrorVM> response = globalExceptionHandler.notFoundException(exception);
+    ResponseEntity<ErrorVM> response = globalExceptionHandler.notFoundException(exception);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getBody().code());
-        assertEquals(null, response.getBody().msg());
-    }
+    assertEquals(HttpStatus.NOT_FOUND, response.getBody().code());
+    assertEquals(null, response.getBody().msg());
+  }
 }

@@ -1,7 +1,6 @@
 package com.app.anyshop.cms.utils;
 
 import java.util.Optional;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;

@@ -1,12 +1,12 @@
 package com.app.anyshop.cms.unit.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.app.anyshop.cms.services.impl.ServiceImpl;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ServiceTest {
   @Test

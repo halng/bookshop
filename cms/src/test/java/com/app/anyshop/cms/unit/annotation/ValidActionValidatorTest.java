@@ -3,9 +3,8 @@ package com.app.anyshop.cms.unit.annotation;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.jupiter.api.Test;
-
 import com.app.anyshop.cms.annotation.validator.ValidActionValidator;
+import org.junit.jupiter.api.Test;
 
 public class ValidActionValidatorTest {
     private ValidActionValidator validator = new ValidActionValidator();
