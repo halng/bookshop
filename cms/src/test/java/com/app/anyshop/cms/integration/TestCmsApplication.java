@@ -1,5 +1,6 @@
-package com.app.anyshop.cms;
+package com.app.anyshop.cms.integration;
 
+import com.app.anyshop.cms.CmsApplication;
 import org.springframework.boot.SpringApplication;
 
 public class TestCmsApplication {

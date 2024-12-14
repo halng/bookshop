@@ -7,7 +7,7 @@ public class ServiceImpl {
   public static String getCurrentUser() {
     var auth =
         (ImmutablePair<String, String>)
-            SecurityContextHolder.getContext().getAuthentication().getCredentials();
+            SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     // all requests have been authenticated
     return auth.getRight();
   }

@@ -1,4 +1,4 @@
-package com.app.anyshop.cms.annotation;
+package com.app.anyshop.cms.unit.annotation;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
