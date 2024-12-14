@@ -1,99 +1,98 @@
 package com.app.anyshop.api;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.web.cors.reactive.CorsUtils;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.anyshop.api.config.CorsConfig;
-
-import reactor.core.publisher.Mono;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.WebTestClient;
 
 class CorsConfigTest {
+  private final CorsConfig corsConfig = new CorsConfig();
+  private WebTestClient webClient;
 
-    private CorsConfig corsConfig;
+  @BeforeEach
+  void setUp() {
+    webClient =
+        WebTestClient.bindToController(new MockController())
+            .webFilter(corsConfig.corsWebFilter())
+            .build();
+  }
 
-    @Mock
-    private ServerWebExchange mockExchange;
+  @Test
+  void testVerifyCorsWebFilter_nonCorsRequest() {
+    EntityExchangeResult<?> result =
+        webClient
+            .get()
+            .uri("/mock/hello")
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody()
+            .returnResult();
+    var headers = result.getResponseHeaders();
+    assertNotNull(headers);
 
-    @Mock
-    private ServerHttpRequest mockRequest;
+    assertNull(headers.getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
+    assertTrue(headers.getAccessControlAllowMethods().isEmpty());
+    assertTrue(headers.getAccessControlAllowHeaders().isEmpty());
+    assertEquals(-1, headers.getAccessControlMaxAge());
+  }
 
-    @Mock
-    private ServerHttpResponse mockResponse;
+  @Test
+  void testVerifyCorsWebFilter_corsRequest() {
+    EntityExchangeResult<?> result =
+        webClient
+            .get()
+            .uri("http://localhost:8080/mock/hello")
+            .header(HttpHeaders.ORIGIN, "http://localhost:8081")
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody()
+            .returnResult();
+    var headers = result.getResponseHeaders();
+    assertNotNull(headers);
 
-    @Mock
-    private WebFilterChain mockFilterChain;
+    assertEquals("*", headers.getFirst(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN));
+    assertEquals(
+        new ArrayList<>(
+            Arrays.asList(
+                HttpMethod.GET,
+                HttpMethod.POST,
+                HttpMethod.PUT,
+                HttpMethod.DELETE,
+                HttpMethod.OPTIONS)),
+        headers.getAccessControlAllowMethods());
+    assertEquals(
+        new ArrayList<>(
+            Arrays.asList(
+                "authorization",
+                "Content-Type",
+                "Authorization",
+                "credential",
+                "X-API-SECRET-TOKEN",
+                "X-API-USER-ID")),
+        headers.getAccessControlAllowHeaders());
+    assertEquals(3600, headers.getAccessControlMaxAge());
+  }
 
-    @Mock
-    private HttpHeaders mockHeaders;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        corsConfig = new CorsConfig();
-        when(mockExchange.getRequest()).thenReturn(mockRequest);
-        when(mockExchange.getResponse()).thenReturn(mockResponse);
-        when(mockResponse.getHeaders()).thenReturn(mockHeaders);
-    }
-
-    @Test
-    void testCorsFilter_AllowsCorsRequest() {
-        // Simulate a CORS request
-        when(CorsUtils.isCorsRequest(mockRequest)).thenReturn(true);
-        when(mockRequest.getMethod()).thenReturn(HttpMethod.GET);
-        when(mockFilterChain.filter(mockExchange)).thenReturn(Mono.empty());
-
-        WebFilter corsFilter = corsConfig.corsWebFilter();
-        corsFilter.filter(mockExchange, mockFilterChain).block();
-
-        // Verify headers are set correctly
-        verify(mockHeaders).set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-        verify(mockHeaders).set(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE, OPTIONS");
-        verify(mockHeaders).set(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "authorization, Content-Type, Authorization, credential, X-API-SECRET-TOKEN, X-API-USER-ID");
-        verify(mockHeaders).set(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "3600");
-        verify(mockFilterChain).filter(mockExchange);
-    }
-
-    @Test
-    void testCorsFilter_OptionsRequest_ReturnsEmpty() {
-        // Simulate a CORS preflight request
-        when(CorsUtils.isCorsRequest(mockRequest)).thenReturn(true);
-        when(mockRequest.getMethod()).thenReturn(HttpMethod.OPTIONS);
-
-        WebFilter corsFilter = corsConfig.corsWebFilter();
-        Mono<Void> result = corsFilter.filter(mockExchange, mockFilterChain);
-
-        // Verify response status is set to OK and no further processing
-        result.block();
-        verify(mockResponse).setStatusCode(HttpStatus.OK);
-        verify(mockFilterChain, never()).filter(mockExchange);
-    }
-
-    @Test
-    void testCorsFilter_NonCorsRequest_DelegatesToFilterChain() {
-        // Simulate a non-CORS request
-        when(CorsUtils.isCorsRequest(mockRequest)).thenReturn(false);
-        when(mockFilterChain.filter(mockExchange)).thenReturn(Mono.empty());
-
-        WebFilter corsFilter = corsConfig.corsWebFilter();
-        corsFilter.filter(mockExchange, mockFilterChain).block();
-
-        // Verify headers are not set and filter chain proceeds
-        verify(mockHeaders, never()).set(anyString(), anyString());
-        verify(mockFilterChain).filter(mockExchange);
-    }
+  @Test
+  void testVerifyCorsWebFilter_corsRequestWithOption() {
+    EntityExchangeResult<?> result =
+        webClient
+            .options()
+            .uri("http://localhost:8080/mock/hello")
+            .header(HttpHeaders.ORIGIN, "http://localhost:8081")
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody()
+            .returnResult();
+  }
 }
