@@ -18,7 +18,7 @@ public class SecurityConfig {
   private final RequestFilter requestFilter;
 
   @Autowired
-  SecurityConfig(RequestFilter requestFilter) {
+  public SecurityConfig(RequestFilter requestFilter) {
     this.requestFilter = requestFilter;
   }
   @Bean

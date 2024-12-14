@@ -28,8 +28,8 @@ public class RequestFilter extends OncePerRequestFilter {
   private static final String USER_ROLE_KEY = "X-API-USER-ROLE";
 
   @Override
-  protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+  public void doFilterInternal(
+          HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     logger.info("RequestFilter.doFilterInternal: Start verifying incoming request");
     String username = request.getHeader(USER_NAME_KEY);

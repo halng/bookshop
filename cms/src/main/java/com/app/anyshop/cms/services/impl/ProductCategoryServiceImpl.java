@@ -58,7 +58,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         created.getCreatedBy(),
         vm.name());
 
-    return new ResVM<>(HttpStatus.CREATED, Message.CREATED_WAITING_APPROVAL, null, null);
+    return new ResVM<>(HttpStatus.CREATED, Message.CREATED_WAITING_APPROVAL, null);
   }
 
   @Override
@@ -67,10 +67,15 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     var productList = productCategory.getProducts();
     Set<ProductResVM> productResVMS = new HashSet<>();
-    for (var product : productList) {
-      productResVMS.add(
-          new ProductResVM(
-              product.getId(), product.getName(), product.getPrice(), product.getStatus().name()));
+    if (productList != null) {
+      for (var product : productList) {
+        productResVMS.add(
+            new ProductResVM(
+                product.getId(),
+                product.getName(),
+                product.getPrice(),
+                product.getStatus().name()));
+      }
     }
 
     var result =
@@ -81,7 +86,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             productCategory.getStatus().name(),
             productResVMS);
 
-    return new ResVM<>(HttpStatus.OK, Message.SUCCESS, result, null);
+    return new ResVM<>(HttpStatus.OK, Message.SUCCESS, result);
   }
 
   @Override
@@ -100,7 +105,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
           HttpStatus.BAD_REQUEST,
           Message.CATEGORY_CAN_NOT_UPDATE.formatted(
               productCategory.getName(), productCategory.getStatus()),
-          null,
           null);
     }
 
@@ -109,7 +113,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
       productCategory.setName(vm.name());
       productCategory.setDescription(vm.description());
       productCategoryRepo.save(productCategory);
-      return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null, null);
+      return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null);
     }
 
     // in case it's in use
@@ -117,7 +121,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     redisUtils.saveDataToCache(key, vm, Message.Constants.DEFAULT_EXPIRED_TIME);
     LOGGER.info("Update category with id {} and save to redis. Waiting for approval", id);
 
-    return new ResVM<>(HttpStatus.OK, Message.UPDATED_WAITING_APPROVAL, null, null);
+    return new ResVM<>(HttpStatus.OK, Message.UPDATED_WAITING_APPROVAL, null);
   }
 
   @Override
@@ -132,13 +136,13 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     var productCategory = this.getCategory(id);
     if (productCategory.getStatus() == Status.valueOf(status)) {
       LOGGER.info("Nothing change, done.");
-      return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null, null);
+      return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null);
     }
 
     productCategory.setStatus(Status.valueOf(status));
     productCategoryRepo.save(productCategory);
 
-    return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null, null);
+    return new ResVM<>(HttpStatus.OK, Message.SUCCESS, null);
   }
 
   @Override
@@ -163,6 +167,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     var pagingObj =
         new PagingObjectVM(productCategories.getTotalPages(), productCategories.getTotalElements());
-    return new PagingResVM<>(HttpStatus.OK, Message.SUCCESS, result, pagingObj, null);
+    return new PagingResVM<>(HttpStatus.OK, Message.SUCCESS, result, pagingObj);
   }
 }
