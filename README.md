@@ -6,8 +6,8 @@
 
 |Component| Stand for| Language | Measure | Code Coverage |
 | -- | -- | -- | -- | -- |
-| `api`| api gateway| Java | | |
-| `cms`| content management system -  For managing product information, categories, etc.| Java | | |
+| `api`| api gateway| Java | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyshop_api&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=anyshop_api) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=anyshop_api&metric=coverage)](https://sonarcloud.io/summary/new_code?id=anyshop_api) |
+| `cms`| content management system -  For managing product information, categories, etc.| Java | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyshop_cms&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=anyshop_cms) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=anyshop_cms&metric=coverage)](https://sonarcloud.io/summary/new_code?id=anyshop_cms) |
 | `search` | product search | Java | | |
 | `iam`| identify and access management - JWT, OAuth for secure user sessions| Go |[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyshop_iam&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=anyshop_iam) |[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=anyshop_iam&metric=coverage)](https://sonarcloud.io/summary/new_code?id=anyshop_iam) |
 | `ims`| inventory management system| Go | | |
