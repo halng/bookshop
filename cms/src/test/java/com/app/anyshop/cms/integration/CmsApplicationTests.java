@@ -1,12 +1,10 @@
-package com.app.anyshop.cms;
+package com.app.anyshop.cms.integration;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@Disabled("Skipping all tests in this class for now")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CmsApplicationTests {
+class CmsApplicationTests extends BaseIntegrationTest {
 
 	@Test
 	void contextLoads() {

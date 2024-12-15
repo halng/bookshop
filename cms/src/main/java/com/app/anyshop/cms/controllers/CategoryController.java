@@ -27,7 +27,8 @@ public class CategoryController {
   }
 
   @GetMapping("")
-  public ResponseEntity<?> getAllCategories(@Min(1) @RequestParam int page) {
+  public ResponseEntity<?> getAllCategories(
+      @RequestParam @Min(value = 1, message = "Invalid page number. Minimum is 1") int page) {
     var res = productCategoryService.getAll(page);
     return ResponseEntity.ok(res);
   }

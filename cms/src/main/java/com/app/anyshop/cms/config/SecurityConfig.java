@@ -1,4 +1,3 @@
-
 package com.app.anyshop.cms.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,7 @@ public class SecurityConfig {
   public SecurityConfig(RequestFilter requestFilter) {
     this.requestFilter = requestFilter;
   }
+
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
     return webSecurity ->
@@ -50,8 +50,11 @@ public class SecurityConfig {
     http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             req ->
-                req.requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs","/api-docs/**", "/error")
+                req.requestMatchers(
+                        "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/error")
                     .permitAll()
+                    .requestMatchers("/status/**")
+                    .hasAuthority("super_admin")
                     .anyRequest()
                     .authenticated());
 
