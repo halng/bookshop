@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
-@RequiredArgsConstructor
 public class RequestFilter extends OncePerRequestFilter {
   private static final Logger logger = LoggerFactory.getLogger(RequestFilter.class);
   private static final String USER_ID_KEY = "X-API-USER-ID";
