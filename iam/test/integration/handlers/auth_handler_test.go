@@ -264,16 +264,11 @@ func TestValidate(t *testing.T) {
 		}
 
 		// act
-		code, res, resHeaders := integration.ServeRequestWithHeader(router, "GET", urlPathValidate, "", headers)
+		code, res, _ = integration.ServeRequestWithHeader(router, "GET", urlPathValidate, "", headers)
 
 		// Assert
 		assert.Equal(t, code, http.StatusOK)
-		assert.Equal(t, res, `{"code":200,"data":null,"status":"SUCCESS"}`)
-
-		assert.Equal(t, "super_admin", resHeaders.Get(constants.ApiUserRoles))
-		assert.Equal(t, "changeme", resHeaders.Get(constants.ApiUserRequestHeader))
-		assert.Equal(t, authData["id"].(string), resHeaders.Get(constants.ApiUserIdRequestHeader))
-
+		assert.Equal(t, res, `{"role":"super_admin","userId":"`+authData["id"].(string)+`","username":"changeme"}`)
 	})
 }
 
