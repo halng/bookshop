@@ -1,39 +1,42 @@
-//package com.app.anyshop.api.config;
+// package com.app.anyshop.api.config;
 //
-//import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR;
-//import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
-//import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
+// import static
+// org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ORIGINAL_REQUEST_URL_ATTR;
+// import static
+// org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR;
+// import static
+// org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR;
 //
-//import com.app.anyshop.api.viewmodel.AuthValidateVm;
-//import com.app.anyshop.api.viewmodel.ResVm;
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import java.net.URI;
-//import java.util.Collections;
-//import java.util.Date;
-//import java.util.Objects;
-//import java.util.Set;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.cloud.gateway.filter.GatewayFilter;
-//import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
-//import org.springframework.cloud.gateway.route.Route;
-//import org.springframework.core.io.buffer.DataBufferFactory;
-//import org.springframework.http.HttpMethod;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.HttpStatusCode;
-//import org.springframework.http.server.reactive.ServerHttpRequest;
-//import org.springframework.http.server.reactive.ServerHttpResponse;
-//import org.springframework.stereotype.Component;
-//import org.springframework.web.reactive.function.client.WebClient;
-//import org.springframework.web.reactive.function.client.WebClientResponseException;
-//import org.springframework.web.server.ServerWebExchange;
-//import reactor.core.publisher.Mono;
+// import com.app.anyshop.api.viewmodel.AuthValidateVm;
+// import com.app.anyshop.api.viewmodel.ResVm;
+// import com.fasterxml.jackson.core.JsonProcessingException;
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import java.net.URI;
+// import java.util.Collections;
+// import java.util.Date;
+// import java.util.Objects;
+// import java.util.Set;
+// import org.slf4j.Logger;
+// import org.slf4j.LoggerFactory;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.cloud.gateway.filter.GatewayFilter;
+// import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
+// import org.springframework.cloud.gateway.route.Route;
+// import org.springframework.core.io.buffer.DataBufferFactory;
+// import org.springframework.http.HttpMethod;
+// import org.springframework.http.HttpStatus;
+// import org.springframework.http.HttpStatusCode;
+// import org.springframework.http.server.reactive.ServerHttpRequest;
+// import org.springframework.http.server.reactive.ServerHttpResponse;
+// import org.springframework.stereotype.Component;
+// import org.springframework.web.reactive.function.client.WebClient;
+// import org.springframework.web.reactive.function.client.WebClientResponseException;
+// import org.springframework.web.server.ServerWebExchange;
+// import reactor.core.publisher.Mono;
 //
-//@Component
-//public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterConfig.Config> {
+// @Component
+// public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterConfig.Config> {
 //
 //  private static final Logger LOG = LoggerFactory.getLogger(AuthFilterConfig.class);
 //  private static final String IAM_SERVICE = "iam";
@@ -62,7 +65,8 @@
 //      HttpMethod method = request.getMethod();
 //      LOG.info("*****************************************************************************");
 //      Set<URI> uris =
-//          exchange.getAttributeOrDefault(GATEWAY_ORIGINAL_REQUEST_URL_ATTR, Collections.emptySet());
+//          exchange.getAttributeOrDefault(GATEWAY_ORIGINAL_REQUEST_URL_ATTR,
+// Collections.emptySet());
 //      String originalUri = uris.isEmpty() ? "Unknown" : uris.iterator().next().toString();
 //
 //      // Also exclude all the incoming request to IAM service.
@@ -160,4 +164,4 @@
 //      // TODO document why this constructor is empty
 //    }
 //  }
-//}
+// }

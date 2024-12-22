@@ -19,15 +19,15 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-  @ExceptionHandler(IllegalArgumentException.class)
-  public ResponseEntity<ResVM> illegalArgumentExceptionHandler(IllegalArgumentException ex) {
-    log.error("IllegalArgumentException: Validation error: {}", ex.getMessage());
+  @ExceptionHandler({ConstrainValidateFailedException.class, IllegalArgumentException.class})
+  public ResponseEntity<ResVM> constrainValidateFailedException(
+      ConstrainValidateFailedException ex) {
+    log.error("ConstrainValidateFailedException: Validation error: {}", ex.getMessage());
     var errorRes =
-        ResVM.builder()
-            .code(HttpStatus.BAD_REQUEST)
-            .msg(
-                "The request is invalid. Please review your input or contact support for assistance.")
-            .build();
+        new ResVM(
+            HttpStatus.BAD_REQUEST,
+            ex.getMessage(),
+            "The request is invalid. Please review your input or contact support for assistance.");
     return ResponseEntity.ok(errorRes);
   }
 }

@@ -7,9 +7,8 @@
 
 package com.app.anyshop.api.viewmodel.response;
 
-import com.google.gson.JsonElement;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 
 @Builder
-public record ResVM(HttpStatus code, JsonElement data, String msg) {}
+public record ResVM(HttpStatus code, Object data, String msg) {}

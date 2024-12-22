@@ -16,7 +16,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
 
 public interface Controller {
   String BASE_V1 = "/api/v1";
@@ -28,7 +30,8 @@ public interface Controller {
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  ResponseEntity<ResVM> getAll(@Min(1) int page);
+  @GetMapping()
+  ResponseEntity<ResVM> getAll(@RequestParam @Min(1) int page);
 
   @Operation(summary = "Get object details by ID")
   @ApiResponses(
@@ -38,7 +41,8 @@ public interface Controller {
         @ApiResponse(responseCode = "404", description = "Object not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  ResponseEntity<ResVM> getById(@NotBlank String id);
+  @GetMapping("/{id}")
+  ResponseEntity<ResVM> getById(@NotBlank @PathVariable String id);
 
   @Operation(summary = "Create a new objects")
   @ApiResponses(
@@ -47,7 +51,8 @@ public interface Controller {
         @ApiResponse(responseCode = "400", description = "Invalid request"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  ResponseEntity<ResVM> create(@Valid Object obj);
+  @PostMapping()
+  ResponseEntity<ResVM> create(@Valid @RequestBody Object obj);
 
   @Operation(summary = "Update a object by ID")
   @ApiResponses(
@@ -57,7 +62,8 @@ public interface Controller {
         @ApiResponse(responseCode = "404", description = "Object not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  ResponseEntity<ResVM> update(@NotBlank String id, @Valid Object obj);
+  @PutMapping("/{id}")
+  ResponseEntity<ResVM> update(@NotBlank @PathVariable String id, @Valid @RequestBody Object obj);
 
   @Operation(summary = "Update the status of a object by ID")
   @ApiResponses(
@@ -67,5 +73,7 @@ public interface Controller {
         @ApiResponse(responseCode = "404", description = "Object not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  ResponseEntity<ResVM> updateStatus(@NotBlank String id, @ValidAction String action);
+  @PatchMapping()
+  ResponseEntity<ResVM> updateStatus(
+      @NotBlank @RequestParam String id, @ValidAction @RequestParam String action);
 }

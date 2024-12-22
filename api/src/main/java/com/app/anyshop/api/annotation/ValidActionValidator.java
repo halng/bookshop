@@ -8,15 +8,16 @@
 package com.app.anyshop.api.annotation;
 
 import com.app.anyshop.api.constant.ActionStatus;
+import com.app.anyshop.api.exceptions.ConstrainValidateFailedException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Validator for the {@link ValidAction} annotation.
  *
- * <p>This validator checks if the value of the annotated field is a valid {@link ActionStatus} value. The
- * value is considered valid if it can be parsed into a {@link ActionStatus} enum. If the value is {@code
- * null}, it is considered invalid.
+ * <p>This validator checks if the value of the annotated field is a valid {@link ActionStatus}
+ * value. The value is considered valid if it can be parsed into a {@link ActionStatus} enum. If the
+ * value is {@code null}, it is considered invalid.
  */
 public class ValidActionValidator implements ConstraintValidator<ValidAction, Object> {
 
@@ -29,7 +30,7 @@ public class ValidActionValidator implements ConstraintValidator<ValidAction, Ob
       ActionStatus.valueOf(o.toString());
       return true;
     } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid action.");
+      throw new ConstrainValidateFailedException("Action %s is not valid".formatted(o.toString()));
     }
   }
 }

@@ -1,14 +1,14 @@
-//package com.app.anyshop.api.config;
+// package com.app.anyshop.api.config;
 //
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.cloud.gateway.filter.factory.DedupeResponseHeaderGatewayFilterFactory;
-//import org.springframework.cloud.gateway.route.RouteLocator;
-//import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.cloud.gateway.filter.factory.DedupeResponseHeaderGatewayFilterFactory;
+// import org.springframework.cloud.gateway.route.RouteLocator;
+// import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
 //
-//@Configuration
-//public class APIConfig {
+// @Configuration
+// public class APIConfig {
 //  private static final String APP_IAM_ID = "iam";
 //  private static final String APP_CMS_ID = "cms";
 //
@@ -68,4 +68,4 @@
 //    ret.setName("Access-Control-Allow-Origin");
 //    return ret;
 //  }
-//}
+// }

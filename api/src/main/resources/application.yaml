@@ -23,8 +23,8 @@ spring:
     allow-bean-definition-overriding: true
   cloud:
     inetutils:
-#      default-hostname: localhost
-#      default-ip-address: 127.0.0.1
+      #      default-hostname: localhost
+      #      default-ip-address: 127.0.0.1
       ignored-interfaces: .*
 
 logging:

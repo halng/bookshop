@@ -29,9 +29,12 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <!--        <spring-cloud.version>2024.0.0-M1</spring-cloud.version>-->
         <sonar.organization>tanhao111</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <spring.boot.web.version>3.4.0</spring.boot.web.version>
+        <spring.boot.redis.version>3.4.0</spring.boot.redis.version>
+        <swagger.mvc.ui.version>2.7.0</swagger.mvc.ui.version>
+        <jackson.databind.version>2.18.1</jackson.databind.version>
     </properties>
     <dependencies>
         <dependency>
@@ -41,12 +44,19 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>3.3.5</version>
+            <version>${spring.boot.redis.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>${spring.boot.web.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
@@ -61,41 +71,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.16</version>
         </dependency>
-        <!--        TODO: remove dependencies below-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-gateway</artifactId>-->
-        <!--        </dependency>-->
-        <!--
-        https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-gateway-server -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-gateway-server</artifactId>-->
-        <!--            <version>4.2.0</version>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -111,7 +94,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>${swagger.mvc.ui.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -120,15 +103,6 @@
         </dependency>
     </dependencies>
     <dependencyManagement>
-        <!--        <dependencies>-->
-        <!--            <dependency>-->
-        <!--                <groupId>org.springframework.cloud</groupId>-->
-        <!--                <artifactId>spring-cloud-dependencies</artifactId>-->
-        <!--                <version>${spring-cloud.version}</version>-->
-        <!--                <type>pom</type>-->
-        <!--                <scope>import</scope>-->
-        <!--            </dependency>-->
-        <!--        </dependencies>-->
     </dependencyManagement>
 
     <build>

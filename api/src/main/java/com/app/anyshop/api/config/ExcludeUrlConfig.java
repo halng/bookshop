@@ -1,10 +1,10 @@
-//package com.app.anyshop.api.config;
+// package com.app.anyshop.api.config;
 //
-//import java.util.HashMap;
-//import java.util.Map;
-//import org.springframework.http.HttpMethod;
+// import java.util.HashMap;
+// import java.util.Map;
+// import org.springframework.http.HttpMethod;
 //
-//public class ExcludeUrlConfig {
+// public class ExcludeUrlConfig {
 //
 //    private static final Map<String, HttpMethod> excludedUrl;
 //
@@ -25,4 +25,4 @@
 //        }
 //        return true;
 //    }
-//}
+// }

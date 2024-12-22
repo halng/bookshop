@@ -9,5 +9,4 @@ package com.app.anyshop.api.viewmodel.request.cms;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record CreateCategoryVM(@NotBlank String name, @NotBlank String description) {
-}
+public record CreateCategoryVM(@NotBlank String name, @NotBlank String description) {}

@@ -9,6 +9,4 @@ package com.app.anyshop.api.controllers.iam;
 
 import com.app.anyshop.api.controllers.Controller;
 
-public interface IAMController extends Controller {
-
-}
+public interface IAMController extends Controller {}
