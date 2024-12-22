@@ -18,8 +18,6 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
-
 public interface Controller {
   String BASE_V1 = "/api/v1";
 
