@@ -1,8 +1,23 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package integration
 
 import (
 	"context"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/halng/anyshop/db"
 	kafka2 "github.com/halng/anyshop/kafka"
@@ -10,12 +25,6 @@ import (
 	"github.com/halng/anyshop/models"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/wait"
-	"io"
-	"log"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"strings"
 )
 
 func SetUpRouter() *gin.Engine {

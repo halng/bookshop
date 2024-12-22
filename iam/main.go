@@ -1,7 +1,17 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/halng/anyshop/constants"
@@ -12,7 +22,6 @@ import (
 	"github.com/halng/anyshop/middleware"
 	"github.com/halng/anyshop/models"
 	"github.com/joho/godotenv"
-	"os"
 )
 
 func main() {

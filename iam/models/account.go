@@ -1,8 +1,20 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package models
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/halng/anyshop/constants"
 	"github.com/halng/anyshop/db"
@@ -11,9 +23,6 @@ import (
 	"github.com/halng/anyshop/utils"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
-	"os"
-	"time"
 )
 
 // TODO: add relationship with role
