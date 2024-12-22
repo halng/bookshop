@@ -1,10 +1,10 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.cms.unit.service;
 
@@ -100,7 +100,7 @@ class ProductCategoryServiceTest {
     CreateCategoryVM vm = new CreateCategoryVM("Category1", "Description1");
     when(productCategoryRepo.save(any(ProductCategory.class))).thenReturn(productCategory);
 
-    ResVM response = productCategoryService.create(vm);
+    ResVM response = productCategoryService.create(vm).getBody();
 
     assertEquals(HttpStatus.CREATED, response.code());
     assertEquals(Message.CREATED_WAITING_APPROVAL, response.msg());
@@ -111,7 +111,7 @@ class ProductCategoryServiceTest {
   void testGetDetails_Success() {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
-    ResVM response = productCategoryService.getDetails("1");
+    ResVM response = productCategoryService.getById("1").getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.SUCCESS, response.msg());
@@ -122,7 +122,7 @@ class ProductCategoryServiceTest {
   void testGetDetails_NotFound() {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.empty());
 
-    assertThrows(NotFoundException.class, () -> productCategoryService.getDetails("1"));
+    assertThrows(NotFoundException.class, () -> productCategoryService.getById("1"));
   }
 
   @Test
@@ -131,7 +131,7 @@ class ProductCategoryServiceTest {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
     CreateCategoryVM vm = new CreateCategoryVM("UpdatedName", "UpdatedDescription");
-    ResVM response = productCategoryService.update("1", vm);
+    ResVM response = productCategoryService.update("1", vm).getBody();
 
     assertEquals(HttpStatus.BAD_REQUEST, response.code());
     assertEquals(
@@ -145,7 +145,7 @@ class ProductCategoryServiceTest {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
     CreateCategoryVM vm = new CreateCategoryVM("UpdatedName", "UpdatedDescription");
-    ResVM response = productCategoryService.update("1", vm);
+    ResVM response = productCategoryService.update("1", vm).getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.SUCCESS, response.msg());
@@ -158,7 +158,7 @@ class ProductCategoryServiceTest {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
     CreateCategoryVM vm = new CreateCategoryVM("UpdatedName", "UpdatedDescription");
-    ResVM response = productCategoryService.update("1", vm);
+    ResVM response = productCategoryService.update("1", vm).getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.UPDATED_WAITING_APPROVAL, response.msg());
@@ -170,7 +170,7 @@ class ProductCategoryServiceTest {
   void testUpdateStatus_NoChange() {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
-    ResVM response = productCategoryService.update("1", "WAITING_APPROVAL");
+    ResVM response = productCategoryService.updateStatus("1", "WAITING_APPROVAL").getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.SUCCESS, response.msg());
@@ -181,7 +181,7 @@ class ProductCategoryServiceTest {
   void testUpdateStatus_ChangeStatus() {
     when(productCategoryRepo.findById("1")).thenReturn(Optional.of(productCategory));
 
-    ResVM response = productCategoryService.update("1", "APPROVED");
+    ResVM response = productCategoryService.updateStatus("1", "APPROVED").getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.SUCCESS, response.msg());
@@ -194,7 +194,7 @@ class ProductCategoryServiceTest {
     when(productCategoryRepo.findAllByCreatedBy(anyString(), any(PageRequest.class)))
         .thenReturn(page);
 
-    PagingResVM response = productCategoryService.getAll(1);
+    PagingResVM response = productCategoryService.getAll(1).getBody();
 
     assertEquals(HttpStatus.OK, response.code());
     assertEquals(Message.SUCCESS, response.msg());

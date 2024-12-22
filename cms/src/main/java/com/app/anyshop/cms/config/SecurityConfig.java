@@ -1,12 +1,14 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.cms.config;
+
+import static org.springframework.security.web.util.matcher.RegexRequestMatcher.regexMatcher;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,7 +63,7 @@ public class SecurityConfig {
                 req.requestMatchers(
                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/error")
                     .permitAll()
-                    .requestMatchers("/status/**")
+                    .requestMatchers(regexMatcher(".*\\?status=.*"))
                     .hasAuthority("super_admin")
                     .anyRequest()
                     .authenticated());

@@ -1,15 +1,14 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.cms.integration.controllers;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.anyshop.cms.constant.Message;
 import com.app.anyshop.cms.dto.CreateCategoryVM;
@@ -89,7 +88,7 @@ public class CategoryControllerTest extends BaseIntegrationTest {
 
     // assert
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.CREATED, responseBody.code());
     assertEquals(Message.CREATED_WAITING_APPROVAL, responseBody.msg());
@@ -115,8 +114,12 @@ public class CategoryControllerTest extends BaseIntegrationTest {
     ResponseEntity<?> response =
         restTemplate.postForEntity("/api/v1/categories", entity, Object.class);
 
-    // assert
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    assertNotNull(responseBody);
+    assertEquals(HttpStatus.BAD_REQUEST, responseBody.code());
+    assertEquals(Message.VALIDATE_FAILED, responseBody.msg());
+    assertTrue(responseBody.data().toString().contains("must not be blank"));
   }
 
   @Test
@@ -126,7 +129,7 @@ public class CategoryControllerTest extends BaseIntegrationTest {
     ResponseEntity<?> response = restTemplate.getForEntity(uri, Object.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    PagingResVM<?> responseBody =
+    PagingResVM responseBody =
         this.objectMapper.convertValue(response.getBody(), PagingResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.OK, responseBody.code());
@@ -161,7 +164,7 @@ public class CategoryControllerTest extends BaseIntegrationTest {
 
     // assert
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.OK, responseBody.code());
 
@@ -195,7 +198,7 @@ public class CategoryControllerTest extends BaseIntegrationTest {
             Object.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.BAD_REQUEST, responseBody.code());
     assertEquals(
@@ -220,7 +223,7 @@ public class CategoryControllerTest extends BaseIntegrationTest {
             uri, HttpMethod.PUT, new HttpEntity<>(updateCategoryVM), Object.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.OK, responseBody.code());
     assertEquals(Message.UPDATED_WAITING_APPROVAL, responseBody.msg());
@@ -252,7 +255,11 @@ public class CategoryControllerTest extends BaseIntegrationTest {
     ResponseEntity<?> response =
         restTemplate.exchange("/api/v1/categories/1", HttpMethod.PUT, entity, Object.class);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    assertNotNull(responseBody);
+    assertEquals(HttpStatus.BAD_REQUEST, responseBody.code());
+    assertEquals(Message.VALIDATE_FAILED, responseBody.msg());
   }
 
   @Test
@@ -270,21 +277,25 @@ public class CategoryControllerTest extends BaseIntegrationTest {
 
     ResponseEntity<?> response =
         restTemplate.exchange(
-            "/api/v1/categories/status/1?action=activate", HttpMethod.PUT, null, Object.class);
+            "/api/v1/categories/1?status=APPROVED", HttpMethod.PATCH, null, Object.class);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
   }
 
   @Test
   void testUpdateStatusCategory_whenActionIsInvalid_ShouldError() {
     ResponseEntity<?> response =
         restTemplate.exchange(
-            "/api/v1/categories/status/1?action=invalid",
-            HttpMethod.PUT,
+            "/api/v1/categories/1?status=invalid",
+            HttpMethod.PATCH,
             new HttpEntity<>(null),
             Object.class);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    assertNotNull(responseBody);
+    assertEquals(HttpStatus.BAD_REQUEST, responseBody.code());
+    assertEquals(Message.VALIDATE_FAILED, responseBody.msg());
   }
 
   @Test
@@ -296,10 +307,10 @@ public class CategoryControllerTest extends BaseIntegrationTest {
     var category = cateOp.get();
     ResponseEntity<?> response =
         restTemplate.getForEntity(
-            "/api/v1/categories/%s/details".formatted(category.getId()), Object.class);
+            "/api/v1/categories/%s".formatted(category.getId()), Object.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.OK, responseBody.code());
     assertEquals(Message.SUCCESS, responseBody.msg());
@@ -315,11 +326,10 @@ public class CategoryControllerTest extends BaseIntegrationTest {
 
   @Test
   void testGetCategoryDetails_whenIdDoesNotExist_ShouldError() {
-    ResponseEntity<?> response =
-        restTemplate.getForEntity("/api/v1/categories/999/details", Object.class);
+    ResponseEntity<?> response = restTemplate.getForEntity("/api/v1/categories/999", Object.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    ResVM<?> responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
+    ResVM responseBody = this.objectMapper.convertValue(response.getBody(), ResVM.class);
     assertNotNull(responseBody);
     assertEquals(HttpStatus.NOT_FOUND, responseBody.code());
     assertEquals("Category with id 999 not found.", responseBody.msg());

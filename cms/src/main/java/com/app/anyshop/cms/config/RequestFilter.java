@@ -1,10 +1,10 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.cms.config;
 
@@ -35,7 +35,7 @@ public class RequestFilter extends OncePerRequestFilter {
 
   @Override
   public void doFilterInternal(
-          HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
     logger.info("RequestFilter.doFilterInternal: Start verifying incoming request");
     String username = request.getHeader(USER_NAME_KEY);

@@ -1,10 +1,10 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.cms.repositories;
 
@@ -17,8 +17,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IProductCategoryRepo extends JpaRepository<ProductCategory, String> {
-    Page<ProductCategory> findAllByCreatedBy(String createdBy, Pageable pageable);
+  Page<ProductCategory> findAllByCreatedBy(String createdBy, Pageable pageable);
 
-    // for testing
-    Optional<ProductCategory> findByName(String name);
+  // for testing
+  Optional<ProductCategory> findByName(String name);
 }
