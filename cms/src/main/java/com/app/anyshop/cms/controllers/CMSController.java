@@ -37,7 +37,6 @@ public abstract class CMSController {
   ResponseEntity<PagingResVM> getAll(@RequestParam @Min(1) int page) {
     return this.service.getAll(page);
   }
-  ;
 
   @Operation(summary = "Get object details by ID")
   @ApiResponses(
@@ -51,7 +50,6 @@ public abstract class CMSController {
   ResponseEntity<ResVM> getById(@NotBlank @PathVariable String id) {
     return this.service.getById(id);
   }
-  ;
 
   @Operation(summary = "Create a new objects")
   @ApiResponses(
@@ -64,7 +62,6 @@ public abstract class CMSController {
   ResponseEntity<ResVM> create(@RequestBody Object obj) {
     return this.service.create(obj);
   }
-  ;
 
   @Operation(summary = "Update a object by ID")
   @ApiResponses(
@@ -78,7 +75,6 @@ public abstract class CMSController {
   ResponseEntity<ResVM> update(@NotBlank @PathVariable String id, @RequestBody Object obj) {
     return this.service.update(id, obj);
   }
-  ;
 
   @Operation(summary = "Update the status of a object by ID")
   @ApiResponses(
@@ -93,5 +89,4 @@ public abstract class CMSController {
       @NotBlank @PathVariable String id, @ValidStatus @RequestParam String status) {
     return this.service.updateStatus(id, status);
   }
-  ;
 }
