@@ -8,10 +8,10 @@
 
 package com.app.anyshop.cms.unit.annotation;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.app.anyshop.cms.annotation.validator.StatusValidator;
+import com.app.anyshop.cms.exceptions.ConstrainValidateFailedException;
 import org.junit.jupiter.api.Test;
 
 public class ValidActionValidatorTest {
@@ -24,7 +24,8 @@ public class ValidActionValidatorTest {
 
   @Test
   void testInvalidStatus() {
-    assertFalse(validator.isValid("invalid status", null));
+    assertThrows(
+        ConstrainValidateFailedException.class, () -> validator.isValid("invalid status", null));
   }
 
   @Test

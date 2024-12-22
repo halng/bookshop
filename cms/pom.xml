@@ -188,6 +188,8 @@
                             <excludes>
                                 <exclude>**/constant/**</exclude>
                                 <exclude>**/entity/**</exclude>
+                                <exclude>**/dto/**</exclude>
+                                <exclude>**/config/**</exclude>
                                 <exclude>**/*CmsApplication.*</exclude>
                             </excludes>
                             <rules>

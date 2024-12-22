@@ -15,12 +15,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 public class SecurityConfigTest {
 
   @Mock private RequestFilter requestFilter;
+  @Mock private HttpSecurity httpSecurity;
 
   private SecurityConfig securityConfig;
 
