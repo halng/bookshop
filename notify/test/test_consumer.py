@@ -1,3 +1,11 @@
+"""
+*****************************************************************************************
+Copyright 2024 By Hal Nguyen 
+Licensed under the Apache License, Version 2.0 (the "License"); 
+you may not use this file except in compliance with the License.
+*****************************************************************************************
+"""
+
 import pytest
 from unittest.mock import patch, MagicMock
 from app.consumer import process_message, load_email_template

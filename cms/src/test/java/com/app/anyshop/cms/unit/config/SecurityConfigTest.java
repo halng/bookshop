@@ -1,3 +1,10 @@
+/*
+ * *****************************************************************************************
+ * Copyright 2024 By Hal Nguyen
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 package com.app.anyshop.cms.unit.config;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -8,12 +15,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 public class SecurityConfigTest {
 
   @Mock private RequestFilter requestFilter;
+  @Mock private HttpSecurity httpSecurity;
 
   private SecurityConfig securityConfig;
 

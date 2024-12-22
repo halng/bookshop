@@ -1,12 +1,21 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package handlers
 
 import (
 	"encoding/json"
-	"github.com/halng/anyshop/db"
-	"github.com/halng/anyshop/models"
 	"net/http"
 	"os"
 	"testing"
+
+	"github.com/halng/anyshop/db"
+	"github.com/halng/anyshop/models"
 
 	"github.com/halng/anyshop/constants"
 	handlers2 "github.com/halng/anyshop/handlers"

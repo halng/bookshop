@@ -1,13 +1,22 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package middleware
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/halng/anyshop/constants"
 	"github.com/halng/anyshop/db"
 	"github.com/halng/anyshop/handlers"
 	"github.com/halng/anyshop/utils"
-	"net/http"
 )
 
 func ValidateRequest(c *gin.Context) {

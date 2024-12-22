@@ -1,7 +1,16 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package kafka
 
 import (
 	"fmt"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/halng/anyshop/logging"
 	"go.uber.org/zap"

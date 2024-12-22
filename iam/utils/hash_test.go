@@ -1,8 +1,17 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package utils
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestComputeHMAC256(t *testing.T) {

@@ -1,3 +1,12 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen 
+* Licensed under the Apache License, Version 2.0 (the "License"); 
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+*/
+
+
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 

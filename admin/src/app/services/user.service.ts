@@ -1,3 +1,11 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen 
+* Licensed under the Apache License, Version 2.0 (the "License"); 
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+*/
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UserCreate } from '../types';

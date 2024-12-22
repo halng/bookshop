@@ -1,10 +1,19 @@
+/*
+* *****************************************************************************************
+* Copyright 2024 By Hal Nguyen
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* *****************************************************************************************
+ */
+
 package utils
 
 import (
-	"github.com/go-playground/validator/v10"
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func ValidateInput(dataSet any) (bool, map[string]string) {
