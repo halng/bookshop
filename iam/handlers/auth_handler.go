@@ -25,7 +25,16 @@ import (
 
 // ========================= Functions =========================
 
+// @BasePath /api/v1/user
+
 // CreateStaff create a new staff account and send a message to kafka
+// @Summary Create a new staff account
+// @Schemes http
+// @Description create a new staff account
+// @Accept json
+// @Produce json
+// @Success 201 {string} string "Created"
+// @Router /create-staff [post]
 func CreateStaff(c *gin.Context) {
 	// check if requester is super admin
 	requesterRole, _ := c.Get(constants.ApiUserRole)

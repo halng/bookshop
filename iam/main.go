@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/halng/anyshop/docs"
 	"os"
 
 	"github.com/gin-contrib/cors"
@@ -21,6 +22,8 @@ import (
 	"github.com/halng/anyshop/middleware"
 	"github.com/halng/anyshop/models"
 	"github.com/joho/godotenv"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -54,7 +57,6 @@ func main() {
 	}))
 
 	userGroup := router.Group("/api/v1/user")
-
 	// user routes
 	userGroup.POST("/login", handlers.Login)
 	userGroup.POST("/create-staff", middleware.ValidateRequest, handlers.CreateStaff)
@@ -66,6 +68,10 @@ func main() {
 	shopGroup := router.Group("/api/v1/shop")
 	shopGroup.POST("", middleware.ValidateRequest, handlers.CreateShop)
 	shopGroup.PUT("", middleware.ValidateRequest, handlers.UpdateShop)
+
+	// swagger
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
 	err = router.Run(":" + port)
 	logging.LOGGER.Info(fmt.Sprintf("Starting web service on port %s", port))
