@@ -24,7 +24,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-@SuperBuilder
 public class Audit {
   @CreationTimestamp private Instant createdTime;
 
