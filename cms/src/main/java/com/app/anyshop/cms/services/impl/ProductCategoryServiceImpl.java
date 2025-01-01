@@ -1,8 +1,7 @@
 /*
  * *****************************************************************************************
  * Copyright 2024 By Hal Nguyen
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * Licensed under the Apache License, Version 2.0;
  * *****************************************************************************************
  */
 
@@ -33,7 +32,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
   private final IProductCategoryRepo productCategoryRepo;
   private final RedisUtils redisUtils;
 
-  protected ProductCategory getCategory(String id) {
+  private ProductCategory getCategory(String id) {
     return productCategoryRepo
         .findById(id)
         .orElseThrow(() -> new NotFoundException("Category with id %s not found.".formatted(id)));
@@ -176,31 +175,4 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     return ResponseEntity.ok(new ResVM(HttpStatus.OK, Message.SUCCESS, null));
   }
-
-  //
-  //  @Override
-  //  public ResVM update(String id, String status) {
-  //    var currentUser = ServiceImpl.getCurrentUser();
-  //    LOGGER.info(
-  //        "Receive Request Update Status {} of category with id {} from user {}.",
-  //        status,
-  //        id,
-  //        currentUser);
-  //
-  //    var productCategory = this.getCategory(id);
-  //    if (productCategory.getStatus() == Status.valueOf(status)) {
-  //      LOGGER.info("Nothing change, done.");
-  //      return new ResVM(HttpStatus.OK, Message.SUCCESS, null);
-  //    }
-  //
-  //    productCategory.setStatus(Status.valueOf(status));
-  //    productCategoryRepo.save(productCategory);
-  //
-  //    return new ResVM(HttpStatus.OK, Message.SUCCESS, null);
-  //  }
-  //
-  //  @Override
-  //  public PagingResVM getAll(int page) {
-
-  //  }
 }

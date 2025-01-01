@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
 * Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -33,7 +32,7 @@ func CreateStaff(c *gin.Context) {
 	// check if requester is super admin
 	requesterRole, _ := c.Get(constants.ApiUserRole)
 	requesterId := c.GetHeader(constants.ApiUserIdRequestHeader)
-	if requesterRole != models.RoleSuperAdmin {
+	if requesterRole != models.RoleShopOwner || requesterRole != models.RoleShopManager {
 		ResponseErrorHandler(c, http.StatusForbidden, constants.InvalidPermission, nil)
 		return
 	}
@@ -70,7 +69,7 @@ func CreateStaff(c *gin.Context) {
 	account.Status = constants.ACCOUNT_STATUS_INACTIVE
 
 	// get role id for staff
-	roleId, err := models.GetRoleIdByName(models.RoleStaff)
+	roleId, err := models.GetRoleIdByName(models.RoleAppWriter)
 	if err != nil {
 		logging.LOGGER.Error("Error when getting role id.", zap.Any("error", err))
 		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)

@@ -25,16 +25,14 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// TODO: add relationship with role
-
 type Account struct {
-	ID        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
+	ID        uuid.UUID `gorm:"primaryKey" json:"id"`
+	Username  string    `gorm:"unique;not null" json:"username"`
 	Password  string    `json:"password"`
-	Email     string    `json:"email"`
+	Email     string    `gorm:"unique;not null" json:"email"`
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
-	RoleId    string    `json:"roleId"`
+	RoleId    uuid.UUID `json:"roleId"`
 	Status    string    `json:"status"`
 	CreateAt  int64     `json:"createAt"`
 	UpdateAt  int64     `json:"updateAt"`

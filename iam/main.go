@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
 * Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -54,13 +53,18 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	groupV1 := router.Group("/api/v1")
+	userGroup := router.Group("/api/v1/user")
 
-	// routes
-	groupV1.POST("/login", handlers.Login)
-	groupV1.POST("/create-staff", middleware.ValidateRequest, handlers.CreateStaff)
-	groupV1.GET("/validate", handlers.Validate)
-	groupV1.POST("/activate", handlers.Activate)
+	// user routes
+	userGroup.POST("/login", handlers.Login)
+	userGroup.POST("/create-staff", middleware.ValidateRequest, handlers.CreateStaff)
+	userGroup.GET("/validate", handlers.Validate)
+	userGroup.POST("/activate", handlers.Activate)
+
+	// shop routes
+	shopGroup := router.Group("/api/v1/shop")
+	shopGroup.POST("", middleware.ValidateRequest, handlers.CreateShop)
+	shopGroup.PUT("", middleware.ValidateRequest, handlers.UpdateShop)
 
 	err = router.Run(":" + port)
 	logging.LOGGER.Info(fmt.Sprintf("Starting web service on port %s", port))

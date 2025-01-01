@@ -13,6 +13,7 @@ import jakarta.persistence.MappedSuperclass;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -23,6 +24,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@SuperBuilder
 public class Audit {
   @CreationTimestamp private Instant createdTime;
 
@@ -31,4 +33,6 @@ public class Audit {
   @CreatedBy private String createdBy;
 
   @LastModifiedBy private String updatedBy;
+
+  private String shopId;
 }

@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
 * Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -11,32 +10,48 @@ package models
 import (
 	"github.com/google/uuid"
 	"github.com/halng/anyshop/db"
+	"github.com/lib/pq"
 )
 
 const (
-	RoleAnonymous  = "anonymous"
-	RoleAdmin      = "admin"
-	RoleStaff      = "staff"
-	RoleUser       = "user"
-	RoleSuperAdmin = "super_admin"
+	// Within the app
+	RoleAppOwner  = "app:owner" // a owner of the app and can do anything
+	RoleAppReader = "app:read"  // a reader of the app and can read anything
+	RoleAppWriter = "app:write" // a writer of the app and can write anything
+	// Within the shop
+	RoleShopOwner   = "shop:owner"   // Has all permissions
+	RoleShopReader  = "shop:read"    // Can read shop data
+	RoleShopWriter  = "shop:write"   // Can update or create new shop data
+	RoleShopManager = "shop:manager" // have permission the same as owner but cannot delete the shop
 )
 
-type Role struct {
-	ID      uuid.UUID `json:"id"`
-	Name    string    `json:"name"`
-	Account []Account
+var RolePermissions = map[string][]string{
+	RoleAppOwner:    {"read", "update", "delete", "create", "approve"},
+	RoleAppReader:   {"read"},
+	RoleAppWriter:   {"read", "update", "create"},
+	RoleShopOwner:   {"read", "update", "delete", "create", "approve"},
+	RoleShopReader:  {"read"},
+	RoleShopWriter:  {"read", "update", "create"},
+	RoleShopManager: {"read", "update", "create", "approve"},
 }
 
-func GetRoleIdByName(name string) (string, error) {
-	var roleID string
+type Role struct {
+	ID          uuid.UUID      `gorm:"primaryKey" json:"id"`
+	Name        string         `gorm:"unique;not null" json:"name"`
+	Permissions pq.StringArray `gorm:"type:text[]" json:"permissions"`
+	Account     []Account      `gorm:"foreignKey:RoleID"`
+}
+
+func GetRoleIdByName(name string) (uuid.UUID, error) {
+	var roleID uuid.UUID
 	err := db.DB.Postgres.Model(&Role{}).Where("name = ?", name).Select("id").Row().Scan(&roleID)
 	if err != nil {
-		return "", err
+		return uuid.UUID{}, err
 	}
 	return roleID, nil
 }
 
-func GetRoleById(id string) (string, error) {
+func GetRoleById(id uuid.UUID) (string, error) {
 	var role Role
 	err := db.DB.Postgres.Where("id = ?", id).First(&role).Error
 	if err != nil {
