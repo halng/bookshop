@@ -29,7 +29,7 @@ func Initialize() {
 
 // InitRole auto create roles when the app starts
 func initRole(db *gorm.DB) {
-	roles := []string{RoleAppOwner, RoleAppReader, RoleAppWriter, RoleShopOwner, RoleShopReader, RoleShopWriter, RoleShopManager}
+	roles := []string{RoleAppOwner, RoleAppReader, RoleAppWriter, RoleShopOwner, RoleShopReader, RoleShopWriter, RoleShopManager, RoleUserBackOffice, RoleUserShopFront}
 
 	for _, roleName := range roles {
 		role := Role{ID: uuid.New(), Name: roleName, Permissions: RolePermissions[roleName]}

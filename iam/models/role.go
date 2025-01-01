@@ -14,6 +14,9 @@ import (
 )
 
 const (
+	// within the user
+	RoleUserBackOffice = "user:back_office" // newly created user. With this role user can only create shop and update their profile
+	RoleUserShopFront  = "user:shop_front"  // newly created user for store front only. With this role user can only shopping and perform related actions
 	// Within the app
 	RoleAppOwner  = "app:owner" // a owner of the app and can do anything
 	RoleAppReader = "app:read"  // a reader of the app and can read anything
@@ -26,13 +29,15 @@ const (
 )
 
 var RolePermissions = map[string][]string{
-	RoleAppOwner:    {"read", "update", "delete", "create", "approve"},
-	RoleAppReader:   {"read"},
-	RoleAppWriter:   {"read", "update", "create"},
-	RoleShopOwner:   {"read", "update", "delete", "create", "approve"},
-	RoleShopReader:  {"read"},
-	RoleShopWriter:  {"read", "update", "create"},
-	RoleShopManager: {"read", "update", "create", "approve"},
+	RoleAppOwner:       {"read", "update", "delete", "create", "approve"},
+	RoleAppReader:      {"read"},
+	RoleAppWriter:      {"read", "update", "create"},
+	RoleShopOwner:      {"read", "update", "delete", "create", "approve"},
+	RoleShopReader:     {"read"},
+	RoleShopWriter:     {"read", "update", "create"},
+	RoleShopManager:    {"read", "update", "create", "approve"},
+	RoleUserBackOffice: {"create", "update"},
+	RoleUserShopFront:  {"create", "update", "read", "update"},
 }
 
 type Role struct {
@@ -58,4 +63,13 @@ func GetRoleById(id uuid.UUID) (string, error) {
 		return "", err
 	}
 	return role.Name, nil
+}
+
+func GetPermissionsByName(name string) ([]string, error) {
+	var role Role
+	err := db.DB.Postgres.Where("name = ?", name).First(&role).Error
+	if err != nil {
+		return nil, err
+	}
+	return role.Permissions, nil
 }

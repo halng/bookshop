@@ -21,6 +21,7 @@ public class ExcludeUrlConfig {
         excludedUrl.put("create-staff", HttpMethod.POST);
         excludedUrl.put("login", HttpMethod.POST);
         excludedUrl.put("image", HttpMethod.GET);
+        excludedUrl.put("register", HttpMethod.POST);
         excludedUrl.put("active-account", HttpMethod.POST);
         excludedUrl.put("inventory", HttpMethod.GET);
     }

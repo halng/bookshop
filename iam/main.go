@@ -58,6 +58,7 @@ func main() {
 	// user routes
 	userGroup.POST("/login", handlers.Login)
 	userGroup.POST("/create-staff", middleware.ValidateRequest, handlers.CreateStaff)
+	userGroup.POST("/register", handlers.Register)
 	userGroup.GET("/validate", handlers.Validate)
 	userGroup.POST("/activate", handlers.Activate)
 
