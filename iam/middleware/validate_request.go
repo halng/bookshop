@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Copyright 2024 By ANYSHOP Project
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -10,10 +9,11 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/halng/anyshop/models"
 	"net/http"
 	"slices"
 	"strings"
+
+	"github.com/halng/anyshop/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/halng/anyshop/constants"

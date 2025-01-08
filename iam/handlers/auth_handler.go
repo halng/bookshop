@@ -1,6 +1,6 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
+* Copyright 2024 By ANYSHOP Project
 * Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
@@ -12,6 +12,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/halng/anyshop/constants"
 	"github.com/halng/anyshop/db"
 	"github.com/halng/anyshop/dto"
@@ -35,113 +36,276 @@ import (
 // @Produce json
 // @Success 201 {string} string "Created"
 // @Router /create-staff [post]
+// func CreateStaff(c *gin.Context) {
+// 	// check if requester is super admin
+// 	requesterRole, _ := c.Get(constants.ApiUserRole)
+// 	requesterId := c.GetHeader(constants.ApiUserIdRequestHeader)
+// 	if !(requesterRole == models.RoleShopOwner || requesterRole == models.RoleShopManager) {
+// 		ResponseErrorHandler(c, http.StatusForbidden, constants.InvalidPermission, nil)
+// 		return
+// 	}
+
+// 	var userInput dto.RegisterRequest
+
+// 	if err := c.ShouldBindJSON(&userInput); err != nil {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, userInput)
+// 		return
+// 	}
+
+// 	if ok, errors := utils.ValidateInput(userInput); !ok {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, errors, userInput)
+// 		return
+// 	}
+
+// 	if models.ExistsByEmailOrUsername(userInput.Email, userInput.Username) {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, fmt.Sprintf(constants.AccountExists, userInput.Email, userInput.Username), userInput)
+// 		return
+// 	}
+
+// 	// only for newly created user. default password is "123456"
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(constants.DefaultPassword), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		logging.LOGGER.Error("CreateStaff", zap.Error(err))
+// 		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
+// 		return
+// 	}
+// 	// get role id for staff
+// 	roleId, err := models.GetRoleIdByName(userInput.Role)
+// 	if err != nil {
+// 		logging.LOGGER.Error("Error when getting role id.", zap.Any("error", err))
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.BadRequest, nil)
+// 		return
+// 	}
+
+// 	account := models.Account{}
+// 	account.Email = userInput.Email
+// 	account.Username = userInput.Username
+// 	account.Password = string(hashedPassword)
+// 	account.LastName = userInput.LastName
+// 	account.FirstName = userInput.FirstName
+// 	account.CreateBy = requesterId
+// 	account.Status = constants.ACCOUNT_STATUS_INACTIVE
+// 	account.RoleId = roleId
+// 	_, err = account.SaveAccount()
+
+// 	if err != nil {
+// 		logging.LOGGER.Error("Error when saving account.", zap.Any("error", err))
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, account)
+// 		return
+// 	}
+
+// 	// send msg to kafka
+// 	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
+
+// 	kafka.PushMessageNewUser(serializedMessage)
+
+// 	ResponseSuccessHandler(c, http.StatusCreated, nil)
+
+// }
+
+// func Register(c *gin.Context) {
+// 	var userInput dto.RegisterRequest
+// 	if err := c.ShouldBindJSON(&userInput); err != nil {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, userInput)
+// 		return
+// 	}
+
+// 	if ok, errors := utils.ValidateInput(userInput); !ok {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, errors, userInput)
+// 		return
+// 	}
+
+// 	if models.ExistsByEmailOrUsername(userInput.Email, userInput.Username) {
+// 		ResponseErrorHandler(c, http.StatusBadRequest, fmt.Sprintf(constants.AccountExists, userInput.Email, userInput.Username), userInput)
+// 		return
+// 	}
+
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userInput.Password), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		logging.LOGGER.Error("Register", zap.Error(err))
+// 		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
+// 		return
+// 	}
+
+// 	roleId, err := models.GetRoleIdByName(models.RoleUserBackOffice)
+// 	if err != nil {
+// 		logging.LOGGER.Error("Error when getting role id.", zap.Any("error", err))
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.BadRequest, nil)
+// 	}
+
+// 	account := models.Account{}
+// 	account.Email = userInput.Email
+// 	account.Username = userInput.Username
+// 	account.Password = string(hashedPassword)
+// 	account.LastName = userInput.LastName
+// 	account.FirstName = userInput.FirstName
+// 	account.CreateBy = "REGISTER"
+// 	account.Status = constants.ACCOUNT_STATUS_INACTIVE
+// 	account.RoleId = roleId
+// 	_, err = account.SaveAccount()
+
+// 	if err != nil {
+// 		logging.LOGGER.Error("Error when saving account.", zap.Any("error", err))
+// 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, account)
+// 		return
+// 	}
+
+// 	// send msg to kafka
+// 	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
+
+// 	kafka.PushMessageNewUser(serializedMessage)
+
+// 	ResponseSuccessHandler(c, http.StatusCreated, nil)
+// }
+
 func CreateStaff(c *gin.Context) {
-	// check if requester is super admin
-	requesterRole, _ := c.Get(constants.ApiUserRole)
-	requesterId := c.GetHeader(constants.ApiUserIdRequestHeader)
-	if !(requesterRole == models.RoleShopOwner || requesterRole == models.RoleShopManager) {
+	// Check requester permissions
+	if !isAuthorized(c, []string{models.RoleShopOwner, models.RoleShopManager}) {
 		ResponseErrorHandler(c, http.StatusForbidden, constants.InvalidPermission, nil)
 		return
 	}
 
-	userDto := GetUserDTOFromBody(c)
-
-	// only for newly created user. default password is "123456"
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(constants.DefaultPassword), bcrypt.DefaultCost)
-	if err != nil {
-		logging.LOGGER.Error("CreateStaff", zap.Error(err))
-		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
-		return
-	}
-	// get role id for staff
-	roleId, err := models.GetRoleIdByName(userDto.Role)
-	if err != nil {
-		logging.LOGGER.Error("Error when getting role id.", zap.Any("error", err))
-		ResponseErrorHandler(c, http.StatusBadRequest, constants.BadRequest, nil)
-	}
-
-	account := models.Account{}
-	account.Email = userDto.Email
-	account.Username = userDto.Username
-	account.Password = string(hashedPassword)
-	account.LastName = userDto.LastName
-	account.FirstName = userDto.FirstName
-	account.CreateBy = requesterId
-	account.Status = constants.ACCOUNT_STATUS_INACTIVE
-	account.RoleId = roleId
-	_, err = account.SaveAccount()
-
-	if err != nil {
-		logging.LOGGER.Error("Error when saving account.", zap.Any("error", err))
-		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, account)
+	// Parse and validate input
+	userInput, ok := parseAndValidateInput(c)
+	if !ok {
 		return
 	}
 
-	// send msg to kafka
-	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
+	// Check if the account already exists
+	if models.ExistsByEmailOrUsername(userInput.Email, userInput.Username) {
+		ResponseErrorHandler(c, http.StatusBadRequest, fmt.Sprintf(constants.AccountExists, userInput.Email, userInput.Username), userInput)
+		return
+	}
 
-	kafka.PushMessageNewUser(serializedMessage)
+	// Generate default password
+	hashedPassword, err := generatePassword(constants.DefaultPassword)
+	if err != nil {
+		logErrorAndRespond(c, "CreateStaff", err, constants.InternalServerError)
+		return
+	}
+
+	// Get role ID
+	roleId, err := models.GetRoleIdByName(userInput.Role)
+	if err != nil {
+		logErrorAndRespond(c, "Error when getting role id.", err, constants.BadRequest)
+		return
+	}
+
+	// Save account
+	account := createAccount(userInput, hashedPassword, c.GetHeader(constants.ApiUserIdRequestHeader), roleId)
+	if !saveAccountAndRespond(c, account) {
+		return
+	}
+
+	// Send Kafka message
+	sendKafkaMessage(account)
 
 	ResponseSuccessHandler(c, http.StatusCreated, nil)
-
 }
 
 func Register(c *gin.Context) {
-	userDto := GetUserDTOFromBody(c)
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(userDto.Password), bcrypt.DefaultCost)
-	if err != nil {
-		logging.LOGGER.Error("Register", zap.Error(err))
-		ResponseErrorHandler(c, http.StatusInternalServerError, constants.InternalServerError, nil)
+	// Parse and validate input
+	userInput, ok := parseAndValidateInput(c)
+	if !ok {
 		return
 	}
 
+	// Check if the account already exists
+	if models.ExistsByEmailOrUsername(userInput.Email, userInput.Username) {
+		ResponseErrorHandler(c, http.StatusBadRequest, fmt.Sprintf(constants.AccountExists, userInput.Email, userInput.Username), userInput)
+		return
+	}
+
+	// Hash password
+	hashedPassword, err := generatePassword(userInput.Password)
+	if err != nil {
+		logErrorAndRespond(c, "Register", err, constants.InternalServerError)
+		return
+	}
+
+	// Get role ID
 	roleId, err := models.GetRoleIdByName(models.RoleUserBackOffice)
 	if err != nil {
-		logging.LOGGER.Error("Error when getting role id.", zap.Any("error", err))
-		ResponseErrorHandler(c, http.StatusBadRequest, constants.BadRequest, nil)
-	}
-
-	account := models.Account{}
-	account.Email = userDto.Email
-	account.Username = userDto.Username
-	account.Password = string(hashedPassword)
-	account.LastName = userDto.LastName
-	account.FirstName = userDto.FirstName
-	account.CreateBy = "REGISTER"
-	account.Status = constants.ACCOUNT_STATUS_INACTIVE
-	account.RoleId = roleId
-	_, err = account.SaveAccount()
-
-	if err != nil {
-		logging.LOGGER.Error("Error when saving account.", zap.Any("error", err))
-		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, account)
+		logErrorAndRespond(c, "Error when getting role id.", err, constants.BadRequest)
 		return
 	}
 
-	// send msg to kafka
-	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
+	// Save account
+	account := createAccount(userInput, hashedPassword, "REGISTER", roleId)
+	if !saveAccountAndRespond(c, account) {
+		return
+	}
 
-	kafka.PushMessageNewUser(serializedMessage)
+	// Send Kafka message
+	sendKafkaMessage(account)
 
 	ResponseSuccessHandler(c, http.StatusCreated, nil)
 }
 
-func GetUserDTOFromBody(c *gin.Context) dto.RegisterRequest {
+func isAuthorized(c *gin.Context, allowedRoles []string) bool {
+	requesterRole, _ := c.Get(constants.ApiUserRole)
+	for _, role := range allowedRoles {
+		if requesterRole == role {
+			return true
+		}
+	}
+	return false
+}
+
+func parseAndValidateInput(c *gin.Context) (dto.RegisterRequest, bool) {
 	var userInput dto.RegisterRequest
 	if err := c.ShouldBindJSON(&userInput); err != nil {
 		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, userInput)
+		return userInput, false
 	}
 
 	if ok, errors := utils.ValidateInput(userInput); !ok {
 		ResponseErrorHandler(c, http.StatusBadRequest, errors, userInput)
+		return userInput, false
 	}
 
-	if models.ExistsByEmailOrUsername(userInput.Email, userInput.Username) {
-		ResponseErrorHandler(c, http.StatusBadRequest, fmt.Sprintf(constants.AccountExists, userInput.Email, userInput.Username), userInput)
-	}
+	return userInput, true
+}
 
-	return userInput
+func generatePassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+func createAccount(userInput dto.RegisterRequest, hashedPassword, createdBy string, roleId uuid.UUID) models.Account {
+	return models.Account{
+		Email:     userInput.Email,
+		Username:  userInput.Username,
+		Password:  hashedPassword,
+		LastName:  userInput.LastName,
+		FirstName: userInput.FirstName,
+		CreateBy:  createdBy,
+		Status:    constants.ACCOUNT_STATUS_INACTIVE,
+		RoleId:    roleId,
+	}
+}
+
+func saveAccountAndRespond(c *gin.Context, account models.Account) bool {
+	_, err := account.SaveAccount()
+	if err != nil {
+		logging.LOGGER.Error("Error when saving account.", zap.Any("error", err))
+		ResponseErrorHandler(c, http.StatusBadRequest, constants.MessageErrorBindJson, account)
+		return false
+	}
+	return true
+}
+
+func sendKafkaMessage(account models.Account) {
+	serializedMessage := account.GenerateAndSaveSerializedMessageForActiveNewUser()
+	kafka.PushMessageNewUser(serializedMessage)
+}
+
+func logErrorAndRespond(c *gin.Context, logMessage string, err error, errorMessage string) {
+	logging.LOGGER.Error(logMessage, zap.Error(err))
+	ResponseErrorHandler(c, http.StatusInternalServerError, errorMessage, nil)
 }
 
 // Login verify user credentials and return uuid pair with token saved in redis

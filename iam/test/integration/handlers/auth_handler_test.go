@@ -1,6 +1,6 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
+* Copyright 2024 By ANYSHOP Project
 * Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
@@ -84,6 +84,7 @@ func TestCreateStaffHandler(t *testing.T) {
 	headers := map[string]string{
 		constants.ApiTokenRequestHeader:  "test-secret",
 		constants.ApiUserIdRequestHeader: "test-user",
+		constants.ApiOriginMethod:        "POST",
 	}
 
 	router := integration.SetUpRouter()
@@ -125,6 +126,7 @@ func TestCreateStaffHandler(t *testing.T) {
 
 		headers[constants.ApiTokenRequestHeader] = masterAdminAuthObject["api-token"].(string)
 		headers[constants.ApiUserIdRequestHeader] = masterAdminAuthObject["id"].(string)
+		headers[constants.ApiOriginMethod] = "POST"
 
 		assert.Equal(t, 200, code)
 	})

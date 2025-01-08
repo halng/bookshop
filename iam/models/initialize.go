@@ -1,6 +1,6 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
+* Copyright 2024 By ANYSHOP Project
 * Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
@@ -65,7 +65,7 @@ func initMasterUser() {
 		LastName:  masterLastName}
 
 	// get role and assign for master account
-	roleId, err := GetRoleIdByName(RoleAppOwner)
+	roleId, err := GetRoleIdByName(RoleShopOwner)
 	if err != nil {
 		logging.LOGGER.Error("Cannot get role id", zap.Any("error", err))
 		panic("Cannot get role id for super admin")

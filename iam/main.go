@@ -1,6 +1,6 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
+* Copyright 2024 By ANYSHOP Project
 * Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
@@ -9,8 +9,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/halng/anyshop/docs"
 	"os"
+
+	"github.com/halng/anyshop/docs"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
