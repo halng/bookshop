@@ -56,7 +56,7 @@ func ValidateRequest(c *gin.Context) {
 
 	canPerform := ValidateRole(c, role, originMethod)
 	if !canPerform {
-		handlers.ResponseErrorHandler(c, http.StatusUnauthorized, constants.Unauthorized, nil)
+		handlers.ResponseErrorHandler(c, http.StatusForbidden, constants.ForbiddenMissingPermission, nil)
 		return
 	}
 

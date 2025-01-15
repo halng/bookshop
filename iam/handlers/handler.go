@@ -43,5 +43,4 @@ func ResponseErrorHandler(c *gin.Context, code int, err interface{}, traceData a
 		"error":  err,
 	})
 	c.Abort()
-	return
 }
