@@ -17,6 +17,7 @@
 | `map`| marketing and promotion | Rust | | |
 | `aar`| analytics and reporting | Python | | |
 | `notify`| notifications | Python | [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=anyshop_notify&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=anyshop_notify) | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=anyshop_notify&metric=coverage)](https://sonarcloud.io/summary/new_code?id=anyshop_notify) |
+| `iac` | infrastructure as code manage and generate config based on template for deployment | Python |  | | 
 | `saf` | customer support and feedback | NodeJS | | |
 | `media` | media: put and get image, video to/from s3 | NodeJS | | |
 | `shop`| user page| Typescript | | |

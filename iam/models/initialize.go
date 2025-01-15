@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Copyright 2024 By ANYSHOP Project
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -30,10 +29,10 @@ func Initialize() {
 
 // InitRole auto create roles when the app starts
 func initRole(db *gorm.DB) {
-	roles := []string{RoleAnonymous, RoleAdmin, RoleStaff, RoleUser, RoleSuperAdmin}
+	roles := []string{RoleAppOwner, RoleAppReader, RoleAppWriter, RoleShopOwner, RoleShopReader, RoleShopWriter, RoleShopManager, RoleUserBackOffice, RoleUserShopFront}
 
 	for _, roleName := range roles {
-		role := Role{ID: uuid.New(), Name: roleName}
+		role := Role{ID: uuid.New(), Name: roleName, Permissions: RolePermissions[roleName]}
 		if err := db.Create(&role).Error; err != nil {
 			logging.LOGGER.Error("Error occurred when creating role",
 				zap.String("roleName", roleName),
@@ -66,7 +65,7 @@ func initMasterUser() {
 		LastName:  masterLastName}
 
 	// get role and assign for master account
-	roleId, err := GetRoleIdByName(RoleSuperAdmin)
+	roleId, err := GetRoleIdByName(RoleShopOwner)
 	if err != nil {
 		logging.LOGGER.Error("Cannot get role id", zap.Any("error", err))
 		panic("Cannot get role id for super admin")

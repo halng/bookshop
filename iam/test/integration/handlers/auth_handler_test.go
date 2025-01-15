@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Copyright 2024 By ANYSHOP Project
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -85,6 +84,7 @@ func TestCreateStaffHandler(t *testing.T) {
 	headers := map[string]string{
 		constants.ApiTokenRequestHeader:  "test-secret",
 		constants.ApiUserIdRequestHeader: "test-user",
+		constants.ApiOriginMethod:        "POST",
 	}
 
 	router := integration.SetUpRouter()
@@ -126,6 +126,7 @@ func TestCreateStaffHandler(t *testing.T) {
 
 		headers[constants.ApiTokenRequestHeader] = masterAdminAuthObject["api-token"].(string)
 		headers[constants.ApiUserIdRequestHeader] = masterAdminAuthObject["id"].(string)
+		headers[constants.ApiOriginMethod] = "POST"
 
 		assert.Equal(t, 200, code)
 	})
@@ -166,7 +167,7 @@ func TestCreateStaffHandler(t *testing.T) {
 
 	t.Run("Create Staff: when user is successfully registered", func(t *testing.T) {
 		// Act
-		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff"}`
+		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff", "role": "shop:read"}`
 		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
 
 		// Assert
@@ -179,7 +180,7 @@ func TestCreateStaffHandler(t *testing.T) {
 
 	t.Run("Create Staff: when user is exists", func(t *testing.T) {
 		// Act
-		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff"}`
+		validUserInput := `{"email":"createdstaff@gmail.com", "username": "createdstaff", "lastname": "createdstaff", "firstname": "createdstaff",  "role": "shop:read"}`
 		code, res, _ := integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
 
 		// Assert
@@ -203,14 +204,15 @@ func TestCreateStaffHandler(t *testing.T) {
 
 		headers[constants.ApiTokenRequestHeader] = objectData["api-token"].(string)
 		headers[constants.ApiUserIdRequestHeader] = objectData["id"].(string)
+		headers[constants.ApiOriginMethod] = "POST"
 
 		// create new user with staff role
 		// Act
-		validUserInput := `{"email":"no-nope@gmail.com", "username": "nope", "password": "nope", "lastname": "nope", "firstname": "nope"}`
+		validUserInput := `{"email":"no-nope@gmail.com", "username": "nope", "password": "nope", "lastname": "nope", "firstname": "nope", "role":"shop:read"}`
 		code, res, _ = integration.ServeRequestWithHeader(router, "POST", urlPathCreateStaff, validUserInput, headers)
 
 		assert.Equal(t, http.StatusForbidden, code)
-		assert.Equal(t, res, `{"code":403,"error":"User does not have permission to access this resource","status":"ERROR"}`)
+		assert.Equal(t, res, `{"code":403,"error":"You do not have permission to perform this action","status":"ERROR"}`)
 	})
 }
 
@@ -277,7 +279,7 @@ func TestValidate(t *testing.T) {
 
 		// Assert
 		assert.Equal(t, code, http.StatusOK)
-		assert.Equal(t, res, `{"role":"super_admin","userId":"`+authData["id"].(string)+`","username":"changeme"}`)
+		assert.Equal(t, res, `{"role":"shop:owner","userId":"`+authData["id"].(string)+`","username":"changeme"}`)
 	})
 }
 

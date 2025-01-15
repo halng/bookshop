@@ -5,6 +5,10 @@
  * ****************************************************************************************
  */
 
-package com.app.anyshop.cms.services;
+package com.app.anyshop.cms.repositories;
 
-public interface ProductAttributeService extends CMSService {}
+import com.app.anyshop.cms.entity.ProductAttribute;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface IProductAttributeRepo extends JpaRepository<ProductAttribute, String> {
+}

@@ -86,3 +86,9 @@ This is the way to fix this:
    // on linux we can install all essentials package for dev
    sudo apt-get install build-essential
    ```
+
+
+### How to generate docs
+```bash
+swag init
+```

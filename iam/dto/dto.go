@@ -1,8 +1,7 @@
 /*
 * *****************************************************************************************
-* Copyright 2024 By Hal Nguyen
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
+* Copyright 2024 By ANYSHOP Project
+* Licensed under the Apache License, Version 2.0;
 * *****************************************************************************************
  */
 
@@ -24,6 +23,8 @@ type RegisterRequest struct {
 	Email     string `json:"email" validate:"required,email"`
 	FirstName string `json:"firstname" validate:"required"`
 	LastName  string `json:"lastname" validate:"required"`
+	Password  string `json:"password"`
+	Role      string `json:"role"`
 }
 
 type LoginRequest struct {

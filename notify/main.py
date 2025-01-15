@@ -1,3 +1,10 @@
+"""
+*****************************************************************************************
+Copyright 2024 By ANYSHOP Project 
+Licensed under the Apache License, Version 2.0;
+*****************************************************************************************
+"""
+
 from app.consumer import consume
 from app.config import KAFKA_CONFIG
 from loguru import logger

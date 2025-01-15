@@ -1,10 +1,10 @@
 /*
-* *****************************************************************************************
-* Copyright 2024 By Hal Nguyen 
-* Licensed under the Apache License, Version 2.0 (the "License"); 
-* you may not use this file except in compliance with the License.
-* *****************************************************************************************
-*/
+ * *****************************************************************************************
+ * Copyright 2024 By ANYSHOP Project
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * *****************************************************************************************
+ */
 
 package com.app.anyshop.api.config;
 
@@ -49,6 +49,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
   private static final String X_API_USER_ID = "X-API-USER-ID";
   private static final String X_API_USER = "X-API-USER";
   private static final String X_API_USER_ROLE = "X-API-USER-ROLE";
+  private static final String X_ORIGINAL_METHOD = "X-API-ORIGIN-METHOD";
   private final WebClient.Builder webClientBuilder;
 
   @Autowired private ObjectMapper objectMapper;
@@ -106,6 +107,7 @@ public class AuthFilterConfig extends AbstractGatewayFilterFactory<AuthFilterCon
             .uri(validateUrl)
             .header(X_API_SECRET_TOKEN_KEY, secretToken)
             .header(X_API_USER_ID, userId)
+            .header(X_ORIGINAL_METHOD, method.name())
             .retrieve()
             .bodyToMono(AuthValidateVm.class)
             .map(
