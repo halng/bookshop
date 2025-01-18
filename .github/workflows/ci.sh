@@ -39,13 +39,11 @@ detect_language() {
 ################################################################################################################################
 
 install_dependencies() {
-    local dep_dir="${HOME}/ci-tools"
-    mkdir -p "$dep_dir"
-    export PATH=$PATH:"$dep_dir/sonar-scanner/bin"
-
-    echo "Installing Sonar Cloud..."
-    curl -fsSL https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip -o "$dep_dir/sonar.zip"
-    unzip -q "$dep_dir/sonar.zip" -d "$dep_dir"
+    
+    curl -O https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux-x64.zip
+    unzip *.zip
+    export PATH=$PATH:"${GITHUB_WORKSPACE}/sonar-scanner-6.2.1.4610-linux-x64/bin"
+    echo "Done: Download and Unzip Sonar Cloud"
 
     echo "Installing Golang CLI Linter..."
     go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.61.0
@@ -95,15 +93,15 @@ run_ci() {
     esac
 
     if [[ "$language" == "java" ]]; then
-        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token="$PSON_TOKEN" -Dsonar.projectKey="$project_key"
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token=$PSON_TOKEN -Dsonar.projectKey=$project_key
     else
         sonar-scanner \
-            -Dsonar.token="$PSON_TOKEN" \
+            -Dsonar.token=$PSON_TOKEN \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=tanhao111 \
-            -Dsonar.projectKey="$project_key" \
-            -Dsonar.projectName="$folder"
+            -Dsonar.projectKey=$project_key \
+            -Dsonar.projectName=$folder
     fi
 
     if [[ -f "Dockerfile" ]]; then
