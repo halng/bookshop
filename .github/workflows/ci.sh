@@ -95,10 +95,10 @@ run_ci() {
     esac
 
     if [[ "$language" == "java" ]]; then
-        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token="$SONAR_TOKEN" -Dsonar.projectKey="$project_key"
+        mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.token="$PSON_TOKEN" -Dsonar.projectKey="$project_key"
     else
         sonar-scanner \
-            -Dsonar.token="$SONAR_TOKEN" \
+            -Dsonar.token="$PSON_TOKEN" \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=tanhao111 \
