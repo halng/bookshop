@@ -7,7 +7,5 @@
 
 package com.app.anyshop.cms.services;
 
-import org.springframework.stereotype.Service;
 
-@Service
 public interface ProductCategoryService extends CMSService {}
