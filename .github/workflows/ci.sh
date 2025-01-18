@@ -83,7 +83,7 @@ run_ci() {
             go test -json ./... > test-report.out
             ;;
         py)
-            poetry install
+            poetry install --no-root
             poetry run black --check .
             poetry run pytest --cov=app --cov-report=xml:coverage.xml
             ;;
