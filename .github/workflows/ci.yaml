@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
       pull-requests: write
     steps:
       - name: Checkout repository
@@ -47,8 +48,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN_IAM: ${{ secrets.SONAR_TOKEN_IAM }}
           SONAR_TOKEN_ADMIN_UI: ${{ secrets.SONAR_TOKEN_ADMIN_UI }}
-          # DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          # DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+          DOCKER_USERNAME: halng
+          DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name  }}
+          REF: ${{ github.ref }}
         run: |
           pwd
           chmod +x .github/workflows/ci.sh
