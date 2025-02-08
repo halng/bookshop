@@ -9,42 +9,66 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"github.com/halng/anyshop/constants"
 	"github.com/halng/anyshop/db"
 	"github.com/lib/pq"
+	"time"
 )
 
 const (
 	// within the user
-	RoleUserBackOffice = "user:back_office" // newly created user. With this role user can only create shop and update their profile
-	RoleUserShopFront  = "user:shop_front"  // newly created user for store front only. With this role user can only shopping and perform related actions
+	RoleSeller = "seller" // newly created user. With this role user can only create shop and update their profile
+	RoleBuyer  = "buyer"  // newly created user for store front only. With this role user can only shopping and perform related actions
 	// Within the app
-	RoleAppOwner  = "app:owner" // a owner of the app and can do anything
-	RoleAppReader = "app:read"  // a reader of the app and can read anything
-	RoleAppWriter = "app:write" // a writer of the app and can write anything
+	RoleAppOwner   = "app:owner"   // a owner of the app and can do anything
+	RoleAppManager = "app:manager" // a reader of the app and can read anything
+	RoleAppStaff   = "app:staff"   // a writer of the app and can write anything
 	// Within the shop
 	RoleShopOwner   = "shop:owner"   // Has all permissions
-	RoleShopReader  = "shop:read"    // Can read shop data
-	RoleShopWriter  = "shop:write"   // Can update or create new shop data
-	RoleShopManager = "shop:manager" // have permission the same as owner but cannot delete the shop
+	RoleShopManager = "shop:manager" // Can read shop data
+	RoleShopStaff   = "shop:staff"   // Can update or create new shop data
 )
 
-var RolePermissions = map[string][]string{
-	RoleAppOwner:       {"read", "update", "delete", "create", "approve"},
-	RoleAppReader:      {"read"},
-	RoleAppWriter:      {"read", "update", "create"},
-	RoleShopOwner:      {"read", "update", "delete", "create", "approve"},
-	RoleShopReader:     {"read"},
-	RoleShopWriter:     {"read", "update", "create"},
-	RoleShopManager:    {"read", "update", "create", "approve"},
-	RoleUserBackOffice: {"create", "update"},
-	RoleUserShopFront:  {"create", "update", "read", "update"},
+var Permissions = map[string][]string{
+	RoleSeller:      {"shop:create", "account:read", "account:update", "account:delete"},
+	RoleBuyer:       {"shopping"},
+	RoleAppOwner:    {"shop:delete", "account:delete", "shop:read", "account:read", "shop:delete"},
+	RoleAppManager:  {""},
+	RoleAppStaff:    {"", ""},
+	RoleShopOwner:   {"shop:read", "shop:update", "shop:delete", "staff:create", ""},
+	RoleShopManager: {""},
+	RoleShopStaff:   {""},
 }
 
 type Role struct {
-	ID          uuid.UUID      `gorm:"primaryKey" json:"id"`
-	Name        string         `gorm:"unique;not null" json:"name"`
+	UserId      uuid.UUID      `json:"userId"`
+	Roles       pq.StringArray `gorm:"type:text[]" json:"roles"`
 	Permissions pq.StringArray `gorm:"type:text[]" json:"permissions"`
-	Account     []Account      `gorm:"foreignKey:RoleID"`
+	CreateAt    int64          `json:"createAt"`
+	UpdateAt    int64          `json:"updateAt"`
+	CreateBy    string         `json:"createBy"`
+	UpdateBy    string         `json:"updateBy"`
+}
+
+func (role *Role) SaveRole() error {
+
+	role.CreateAt = time.Now().Unix()
+	if role.CreateBy != "" {
+		role.CreateBy = constants.DefaultCreator
+	}
+
+	if err := db.DB.Postgres.Create(&role).Error; err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (role *Role) BeforeSave() error {
+	role.UpdateAt = time.Now().Unix()
+	role.UpdateBy = constants.DefaultCreator
+	return nil
 }
 
 func GetRoleIdByName(name string) (uuid.UUID, error) {
@@ -56,13 +80,13 @@ func GetRoleIdByName(name string) (uuid.UUID, error) {
 	return roleID, nil
 }
 
-func GetRoleById(id uuid.UUID) (string, error) {
+func GetRoleAndPermissionsById(userId uuid.UUID) ([]string, []string, error) {
 	var role Role
-	err := db.DB.Postgres.Where("id = ?", id).First(&role).Error
+	err := db.DB.Postgres.Where("userId = ?", userId).First(&role).Error
 	if err != nil {
-		return "", err
+		return nil, nil, err
 	}
-	return role.Name, nil
+	return role.Roles, role.Permissions, nil
 }
 
 func GetPermissionsByName(name string) ([]string, error) {

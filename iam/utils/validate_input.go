@@ -8,6 +8,8 @@
 package utils
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"reflect"
 	"strconv"
 	"strings"
@@ -15,7 +17,20 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateInput(dataSet any) (bool, map[string]string) {
+// ParseAndValidateInput function to parse json data from request to stype and validate input data
+func ParseAndValidateInput(c *gin.Context, input interface{}) (interface{}, error) {
+	if err := c.ShouldBindJSON(&input); err != nil {
+		return input, err
+	}
+
+	if ok, errors := ValidateInput(input); !ok {
+		return input, errors
+	}
+
+	return input, nil
+}
+
+func ValidateInput(dataSet any) (bool, error) {
 	var validate = validator.New()
 
 	err := validate.Struct(dataSet)
@@ -53,7 +68,7 @@ func ValidateInput(dataSet any) (bool, map[string]string) {
 			errors[idxStr] = msg
 			countError++
 		}
-		return false, errors
+		return false, fmt.Errorf("invalid input data: %v", errors)
 	}
 	return true, nil
 }
